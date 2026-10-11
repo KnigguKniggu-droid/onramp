@@ -1,0 +1,23 @@
+{
+  "_comment": "OnRamp profile for Healthchecks. Change only this file when dropping the kit into another repo.",
+  "repo_name": "Healthchecks",
+  "framework": "django",
+  "venv_activate": ".venv\\Scripts\\activate",
+  "test_runner": "python manage.py test",
+  "settings_module": "hc.settings",
+  "app_root": "hc",
+  "source_roots": ["hc"],
+  "apps": [
+    "hc.accounts",
+    "hc.api",
+    "hc.front",
+    "hc.logs",
+    "hc.payments",
+    "hc.integrations"
+  ],
+  "test_file_pattern": "hc/**/tests/test_*.py",
+  "base_test_class": "hc/test.py",
+  "manage_py": "manage.py",
+  "evidence_dir": "docs/onramp/evidence",
+  "targeted_test": "python manage.py test hc.api.tests.test_ping.PingTestCase"
+}
