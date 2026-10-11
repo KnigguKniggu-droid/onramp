@@ -1,0 +1,10 @@
+{
+  "slug": "webhook-205",
+  "sealed_at": "2026-10-11T21:05:38.561200+00:00",
+  "baseline_commit": "a3acbc38e45ba085a414296c33af3d984fc491e0",
+  "brief_sha256": "12c482dc2578402a5c77c5ae60bca4f5d61e97d7eb0b030d89454ad67342da15",
+  "allowed_information": "",
+  "withheld_information": "",
+  "patch_attached": false,
+  "patch_stats": null
+}
