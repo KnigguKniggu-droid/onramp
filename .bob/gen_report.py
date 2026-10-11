@@ -194,9 +194,14 @@ def capture_baseline(
     # Parse per-test failure details
     failing: list[dict[str, str]] = []
     for fid in result.fail_ids:
-        # Try to find the error type from the traceback block for this test
+        # Try to find the error type from the traceback block for this test.
+        # The FAIL/ERROR header may be in Django style:
+        #   FAIL: test_foo (pkg.Module.test_foo)
+        # or plain unittest -v style (same format), or bare:
+        #   FAIL: test_foo
+        # fid is the dotted form (pkg.Module.test_foo); match either position.
         block_re = re.compile(
-            rf"(?:FAIL|ERROR): {re.escape(fid)}.*?(?=(?:FAIL|ERROR): |\Z)",
+            rf"(?:FAIL|ERROR): (?:\S+ \()?{re.escape(fid)}\)?.*?(?=(?:FAIL|ERROR): |\Z)",
             re.DOTALL,
         )
         bm = block_re.search(output)

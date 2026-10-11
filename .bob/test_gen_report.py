@@ -102,6 +102,26 @@ _PLAIN_FAIL_NO_CLASS = textwrap.dedent("""\
     FAILED (failures=1)
 """)
 
+# Plain unittest -v output: bare method name first, full dotted ID in parens
+# This is the exact format produced by:
+#   python -m unittest tests.test_tasks -v
+# with the FAIL header line as printed to stderr.
+_PLAIN_VERBOSE_FAIL_OUTPUT = textwrap.dedent("""\
+    test_overdue_task_is_detected (tests.test_tasks.TaskApiTestCase.test_overdue_task_is_detected) ... FAIL
+
+    ======================================================================
+    FAIL: test_overdue_task_is_detected (tests.test_tasks.TaskApiTestCase.test_overdue_task_is_detected)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "tests/test_tasks.py", line 20, in test_overdue_task_is_detected
+        self.assertTrue(task.is_overdue())
+    AssertionError: False is not true
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.003s
+
+    FAILED (failures=1)
+""")
+
 _DIFF_ONE_FILE = textwrap.dedent("""\
     diff --git a/hc/api/views.py b/hc/api/views.py
     index abc123..def456 100644
@@ -226,6 +246,63 @@ class TestRunResult(unittest.TestCase):
     def test_plain_fail_error_type(self):
         r = gr.RunResult(_PLAIN_FAIL_OUTPUT)
         self.assertIn("AssertionError", r.first_error_type())
+
+    # --- plain unittest -v (verbose) format: short name first, full ID in parens ---
+
+    def test_plain_verbose_fail_id_extracted(self):
+        r = gr.RunResult(_PLAIN_VERBOSE_FAIL_OUTPUT)
+        self.assertFalse(r.passed)
+        self.assertEqual(r.tests_run, 1)
+        self.assertIn(
+            "tests.test_tasks.TaskApiTestCase.test_overdue_task_is_detected",
+            r.fail_ids,
+        )
+
+    def test_plain_verbose_fail_error_type(self):
+        r = gr.RunResult(_PLAIN_VERBOSE_FAIL_OUTPUT)
+        self.assertIn("AssertionError", r.first_error_type())
+
+
+# ---------------------------------------------------------------------------
+# capture_baseline error-type extraction (block_re fix)
+# ---------------------------------------------------------------------------
+
+class TestCaptureBaselineErrorType(unittest.TestCase):
+    """Verify that the traceback block is found for the plain unittest -v format
+    where fid appears inside parens, not at the start of the FAIL: line."""
+
+    def _error_type_for(self, output: str, fid: str) -> str:
+        import re as _re
+        block_re = _re.compile(
+            rf"(?:FAIL|ERROR): (?:\S+ \()?{_re.escape(fid)}\)?.*?(?=(?:FAIL|ERROR): |\Z)",
+            _re.DOTALL,
+        )
+        bm = block_re.search(output)
+        block_text = bm.group(0) if bm else ""
+        etm = gr._ERROR_TYPE_RE.search(block_text)
+        return etm.group(1) if etm else "Unknown"
+
+    def test_verbose_format_block_found(self):
+        fid = "tests.test_tasks.TaskApiTestCase.test_overdue_task_is_detected"
+        et = self._error_type_for(_PLAIN_VERBOSE_FAIL_OUTPUT, fid)
+        self.assertEqual(et, "AssertionError")
+
+    def test_django_format_block_found(self):
+        fid = "hc.api.tests.test_ping.PingTestCase.test_ping_empty"
+        et = self._error_type_for(_FAIL_OUTPUT, fid)
+        self.assertEqual(et, "AssertionError")
+
+    def test_bare_name_not_in_parens_returns_unknown(self):
+        # fid is the dotted form, but raw output only has bare name — no block match
+        fid = "tests.test_tasks.TaskApiTestCase.test_overdue_task_is_detected"
+        bare_output = (
+            "FAIL: test_overdue_task_is_detected\n"
+            "AssertionError: False is not true\n"
+            "Ran 1 test in 0.003s\nFAILED (failures=1)\n"
+        )
+        # bare output only has short name; fid won't match — error_type is Unknown
+        et = self._error_type_for(bare_output, fid)
+        self.assertEqual(et, "Unknown")
 
 
 # ---------------------------------------------------------------------------

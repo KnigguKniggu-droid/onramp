@@ -37,7 +37,11 @@ framework-specific command or path is needed throughout this skill.
 ## Step 4 — Models
 
 For each app in `profile.apps`:
-1. Use `GetSymbolsOverview` on `<app>/models.py`.
+1. If `profile.apps` is present and the project uses Django or a framework with
+   explicit model files, use `GetSymbolsOverview` on `<app>/models.py`.
+   For plain-unittest Flask/FastAPI projects that do not have `models.py` files,
+   use `glob` to locate model or schema files and read them with `read_file`.
+   Skip this step if no model files are found.
 2. Note the top-level model class names and their most important fields
    (do not read full bodies unless a field is ambiguous).
 
@@ -54,9 +58,9 @@ For each app in `profile.apps`:
 From `profile.json` assemble the exact commands for this machine:
 - Activate venv: `profile.venv_activate`
 - Run full test suite: `profile.test_runner`
-- Run one app: `profile.test_runner` + ` ` + `profile.app_root` + `.<app>`
+- Run one app: only if `profile.framework` is `"django"` — `profile.test_runner` + ` ` + `profile.app_root` + `.<app>`
 - Run one test: `profile.test_runner` + ` <Module.Class.method>`
-- Run server: derived from `manage.py` location
+- Run server: only if `profile.manage_py` is set — `<venv python> profile.manage_py runserver`; omit this entry for projects without `manage.py` (e.g. Flask apps run with `flask run` or a custom script)
 
 ## Step 7 — Write CODEBASE_MAP.md
 
