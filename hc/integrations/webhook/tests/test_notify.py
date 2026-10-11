@@ -537,6 +537,27 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(payload, b'Project "Foo"')
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_webhooks_accept_http_205(self, mock_get: Mock) -> None:
+        """HTTP 205 Reset Content is a 2xx status and must not be treated as an error."""
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+        mock_get.return_value.status_code = 205
+
+        self.channel.notify(self.flip)
+
+        # Only one request should be made (no retries on success)
+        self.assertEqual(mock_get.call_count, 1)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_body_json_variable(self, mock_post: Mock) -> None:
         definition = {
             "method_down": "POST",
