@@ -1,0 +1,232 @@
+﻿python.exe : Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+At line:1 char:82
++ ... -205.txt", (& .venv\Scripts\python.exe manage.py test hc.integrations ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Creating test d...che=shared')...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: apprise, call, compressor, discord, email, github, googlechat, gotify, group, humanize, matrix, mattermost, messages, msteamsw, ntfy, opsgenie, pagertree, pd, po, prometheus, pushbullet, rocketchat, shell, signal, slack, sms, spike, staticfiles, telegram, trello, victorops, webhook, whatsapp, zulip
+  Apply all migrations: accounts, admin, api, auth, contenttypes, logs, payments, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying accounts.0001_initial... OK
+  Applying accounts.0002_profile_ping_log_limit... OK
+  Applying accounts.0003_profile_token... OK
+  Applying accounts.0004_profile_api_key... OK
+  Applying accounts.0005_auto_20160509_0801... OK
+  Applying accounts.0006_profile_current_team... OK
+  Applying accounts.0007_profile_check_limit... OK
+  Applying accounts.0008_profile_bill_to... OK
+  Applying accounts.0009_auto_20170714_1734... OK
+  Applying accounts.0010_profile_team_limit... OK
+  Applying accounts.0011_profile_sort... OK
+  Applying accounts.0012_auto_20171014_1002... OK
+  Applying accounts.0013_remove_profile_team_access_allowed... OK
+  Applying accounts.0014_auto_20171227_1530... OK
+  Applying accounts.0015_auto_20181029_1858... OK
+  Applying accounts.0016_remove_profile_bill_to... OK
+  Applying accounts.0017_auto_20190112_1426... OK
+  Applying accounts.0018_auto_20190112_1426... OK
+  Applying accounts.0019_project_badge_key... OK
+  Applying accounts.0020_auto_20190112_1950... OK
+  Applying accounts.0021_auto_20190112_2005... OK
+  Applying accounts.0022_auto_20190114_0857... OK
+  Applying accounts.0023_auto_20190117_1419... OK
+  Applying accounts.0024_auto_20190119_1540... OK
+  Applying accounts.0025_remove_member_team... OK
+  Applying accounts.0026_auto_20190204_2042... OK
+  Applying accounts.0027_profile_deletion_notice_date... OK
+  Applying accounts.0028_auto_20191119_1346... OK
+  Applying accounts.0029_remove_profile_current_project... OK
+  Applying accounts.0030_member_transfer_request_date... OK
+  Applying accounts.0031_auto_20200803_1413... OK
+  Applying accounts.0032_auto_20200819_0757... OK
+  Applying accounts.0033_member_rw... OK
+  Applying accounts.0034_credential... OK
+  Applying accounts.0035_profile_reports... OK
+  Applying accounts.0036_fill_profile_reports... OK
+  Applying accounts.0037_profile_tz... OK
+  Applying accounts.0038_profile_theme... OK
+  Applying accounts.0039_remove_profile_reports_allowed... OK
+  Applying accounts.0040_auto_20210722_1244... OK
+  Applying accounts.0041_fill_role... OK
+  Applying accounts.0042_remove_member_rw... OK
+  Applying accounts.0043_add_role_manager... OK
+  Applying accounts.0044_auto_20210730_0942... OK
+  Applying accounts.0045_auto_20210908_1257... OK
+  Applying accounts.0046_profile_deletion_scheduled_date... OK
+  Applying accounts.0047_profile_over_limit_date... OK
+  Applying accounts.0048_alter_profile_user... OK
+  Applying accounts.0049_convert_email_lowercase... OK
+  Applying accounts.0050_fix_legacy_timezones... OK
+  Applying accounts.0051_alter_profile_reports... OK
+  Applying accounts.0052_remove_profile_team_limit... OK
+  Applying accounts.0053_alter_profile_sms_limit... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying api.0001_initial... OK
+  Applying api.0002_auto_20150616_0732... OK
+  Applying api.0003_auto_20150616_1249... OK
+  Applying api.0004_auto_20150616_1319... OK
+  Applying api.0005_auto_20150630_2021... OK
+  Applying api.0006_check_grace... OK
+  Applying api.0007_ping... OK
+  Applying api.0008_auto_20150801_1213... OK
+  Applying api.0009_auto_20150801_1250... OK
+  Applying api.0010_channel... OK
+  Applying api.0011_notification... OK
+  Applying api.0012_auto_20150930_1922... OK
+  Applying api.0013_auto_20151001_2029... OK
+  Applying api.0014_auto_20151019_2039... OK
+  Applying api.0015_auto_20151022_1008... OK
+  Applying api.0016_auto_20151030_1107... OK
+  Applying api.0017_auto_20151117_1032... OK
+  Applying api.0018_remove_ping_body... OK
+  Applying api.0019_check_tags... OK
+  Applying api.0020_check_n_pings... OK
+  Applying api.0021_ping_n... OK
+  Applying api.0022_auto_20160130_2042... OK
+  Applying api.0023_auto_20160131_1919... OK
+  Applying api.0024_auto_20160203_2227... OK
+  Applying api.0025_auto_20160216_1214... OK
+  Applying api.0026_auto_20160415_1824... OK
+  Applying api.0027_auto_20161213_1059... OK
+  Applying api.0028_auto_20170305_1907... OK
+  Applying api.0029_auto_20170507_1251... OK
+  Applying api.0030_check_last_ping_body... OK
+  Applying api.0031_auto_20170509_1320... OK
+  Applying api.0032_auto_20170608_1158... OK
+  Applying api.0033_auto_20170714_1715... OK
+  Applying api.0034_auto_20171227_1530... OK
+  Applying api.0035_auto_20171229_2008... OK
+  Applying api.0036_auto_20180116_2243... OK
+  Applying api.0037_auto_20180127_1215... OK
+  Applying api.0038_auto_20180318_1306... OK
+  Applying api.0039_remove_check_last_ping_body... OK
+  Applying api.0040_auto_20180517_1336... OK
+  Applying api.0041_check_desc... OK
+  Applying api.0042_auto_20181029_1522... OK
+  Applying api.0043_channel_name... OK
+  Applying api.0044_auto_20181120_2004... OK
+  Applying api.0045_flip... OK
+  Applying api.0046_auto_20181218_1245... OK
+  Applying api.0047_auto_20181225_2315... OK
+  Applying api.0048_auto_20190102_0737... OK
+  Applying api.0049_auto_20190102_0743... OK
+  Applying api.0050_ping_kind... OK
+  Applying api.0051_auto_20190104_0908... OK
+  Applying api.0052_auto_20190104_1122... OK
+  Applying api.0053_check_subject... OK
+  Applying api.0054_auto_20190112_1427... OK
+  Applying api.0055_auto_20190112_1427... OK
+  Applying api.0056_auto_20190114_0857... OK
+  Applying api.0057_auto_20190118_1319... OK
+  Applying api.0058_auto_20190312_1716... OK
+  Applying api.0059_auto_20190314_1744... OK
+  Applying api.0060_tokenbucket... OK
+  Applying api.0061_webhook_values... OK
+  Applying api.0062_auto_20190720_1350... OK
+  Applying api.0063_auto_20190903_0901... OK
+  Applying api.0064_auto_20191119_1346... OK
+  Applying api.0065_auto_20191127_1240... OK
+  Applying api.0066_channel_last_error... OK
+  Applying api.0067_last_error_values... OK
+  Applying api.0068_auto_20200117_1023... OK
+  Applying api.0069_auto_20200117_1227... OK
+  Applying api.0070_auto_20200411_1310... OK
+  Applying api.0071_check_manual_resume... OK
+  Applying api.0072_auto_20200701_1007... OK
+  Applying api.0073_auto_20200721_1000... OK
+  Applying api.0074_auto_20200803_1411... OK
+  Applying api.0075_auto_20200805_1004... OK
+  Applying api.0076_auto_20201128_0951... OK
+  Applying api.0077_auto_20210506_0755... OK
+  Applying api.0078_sms_values... OK
+  Applying api.0079_auto_20210907_0918... OK
+  Applying api.0080_fill_slug... OK
+  Applying api.0081_channel_last_notify... OK
+  Applying api.0082_fill_last_notify... OK
+  Applying api.0083_channel_disabled... OK
+  Applying api.0084_ping_body_raw... OK
+  Applying api.0085_ping_object_size... OK
+  Applying api.0086_remove_check_last_ping_was_fail_and_more... OK
+  Applying api.0087_check_failure_kw_check_filter_body_and_more... OK
+  Applying api.0088_fill_kw... OK
+  Applying api.0089_remove_check_subject_remove_check_subject_fail... OK
+  Applying api.0090_alter_check_filter_subject... OK
+  Applying api.0091_alter_check_filter_body... OK
+  Applying api.0092_alter_check_success_kw... OK
+  Applying api.0093_alter_check_failure_kw... OK
+  Applying api.0094_ping_rid_alter_channel_kind... OK
+  Applying api.0095_check_last_start_rid... OK
+  Applying api.0096_check_start_kw_alter_channel_kind... OK
+  Applying api.0097_alter_channel_kind... OK
+  Applying api.0098_channel_last_notify_duration... OK
+  Applying api.0099_alter_channel_disabled... OK
+  Applying api.0100_opsgenie_values... OK
+  Applying api.0101_alter_channel_kind... OK
+  Applying api.0102_alter_check_kind... OK
+  Applying api.0103_check_badge_key... OK
+  Applying api.0104_fill_notification_code... OK
+  Applying api.0105_alter_notification_code... OK
+  Applying api.0106_fix_tz_kiev_kyiv... OK
+  Applying api.0107_fix_legacy_timezones... OK
+  Applying api.0108_move_body_to_body_raw... OK
+  Applying api.0109_remove_ping_body... OK
+  Applying api.0110_delete_hipchat_pagerteam_zendesk... OK
+  Applying api.0111_alter_channel_kind... OK
+  Applying api.0112_alter_channel_kind... OK
+  Applying api.0113_alter_channel_kind... OK
+  Applying api.0114_flip_reason... OK
+  Applying api.0115_flip_api_flip_owner_created... OK
+  Applying api.0116_alter_check_badge_key... OK
+  Applying api.0117_fill_badge_key... OK
+  Applying api.0118_alter_check_badge_key... OK
+  Applying api.0119_check_filter_default_fail_check_filter_http_body_and_more... OK
+  Applying api.0120_fix_ping_kind... OK
+  Applying api.0121_fix_legacy_timezones_ii... OK
+  Applying api.0122_delete_msteams_linenotify... OK
+  Applying api.0123_alter_channel_kind... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying logs.0001_initial... OK
+  Applying logs.0002_record_host... OK
+  Applying payments.0001_initial... OK
+  Applying payments.0002_subscription_plan_id... OK
+  Applying payments.0003_subscription_address_id... OK
+  Applying payments.0004_subscription_send_invoices... OK
+  Applying payments.0005_subscription_plan_name... OK
+  Applying payments.0006_subscription_invoice_email... OK
+  Applying payments.0007_auto_20200727_1430... OK
+  Applying payments.0008_subscription_setup_date... OK
+  Applying payments.0009_alter_subscription_user... OK
+test_webhooks_accept_http_205 
+(hc.integrations.webhook.tests.test_notify.NotifyWebhookTestCase.test_webhooks_accept_http_205)
+HTTP 205 Reset Content is a 2xx status and must not be treated as an error. ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.007s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
