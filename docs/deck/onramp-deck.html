@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OnRamp pitch deck</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  :root { --blue: #0f62fe; --ink: #161616; --muted: #525252; --line: #e0e0e0; --soft: #f2f4f8; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; color: var(--ink);
+    font-family: "Segoe UI", "IBM Plex Sans", Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 13.333in; height: 7.5in; padding: 0.55in 0.7in; position: relative; page-break-after: always; overflow: hidden; }
+  .slide:last-child { page-break-after: auto; }
+  .kicker { color: var(--blue); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13pt; }
+  h1 { font-size: 46pt; margin: 0.15in 0 0.1in; line-height: 1.05; }
+  h2 { font-size: 30pt; margin: 0.08in 0 0.25in; line-height: 1.12; }
+  p, li { font-size: 15.5pt; line-height: 1.38; }
+  ul { margin: 0; padding-left: 1.1em; }
+  li { margin-bottom: 0.08in; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12pt; }
+  .foot { position: absolute; left: 0.7in; right: 0.7in; bottom: 0.32in; display: flex; justify-content: space-between;
+    color: var(--muted); font-size: 10.5pt; border-top: 1px solid var(--line); padding-top: 0.08in; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45in; }
+  .cols-60 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.4in; align-items: start; }
+  .card { background: var(--soft); border-radius: 10px; padding: 0.2in 0.25in; }
+  .card h3 { margin: 0 0 0.08in; font-size: 15pt; color: var(--blue); }
+  .card p, .card li { font-size: 13pt; }
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.16in; margin-top: 0.1in; }
+  .step { background: var(--soft); border-top: 5px solid var(--blue); border-radius: 8px; padding: 0.14in 0.16in; min-height: 2.7in; }
+  .step b { display: block; font-size: 14.5pt; margin-bottom: 0.06in; }
+  .step span { font-size: 11.8pt; line-height: 1.35; display: block; color: #262626; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.18in; }
+  .stat { background: var(--soft); border-radius: 10px; padding: 0.16in 0.2in; }
+  .stat .n { font-size: 34pt; font-weight: 700; color: var(--blue); line-height: 1; }
+  .stat .l { font-size: 11.5pt; color: var(--muted); margin-top: 0.06in; }
+  img.shot { width: 100%; border: 1px solid var(--line); border-radius: 8px; }
+  .note { border-left: 4px solid var(--blue); padding: 0.08in 0.16in; background: #edf5ff; font-size: 12.5pt; margin-top: 0.18in; }
+  .title-band { position: absolute; left: 0; top: 0; bottom: 0; width: 0.28in; background: var(--blue); }
+  code { font-family: Consolas, "IBM Plex Mono", monospace; font-size: 0.92em; background: #eef0f3; padding: 0 0.05em; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="title-band"></div>
+  <div class="kicker" style="margin-top:0.9in">Building with IBM Bob Â· Theme 1: Explore, Fix, and Build</div>
+  <h1>OnRamp</h1>
+  <p style="font-size:24pt; max-width:10.8in; margin-top:0.05in">An IBM Bob kit that takes a developer from "never seen this repo" to a verified fix and feature, with evidence behind every claim.</p>
+  <div style="margin-top:0.55in" class="cols">
+    <div class="card"><h3>Team</h3><p>Solo participant<br><span class="muted">Code: github.com/KnigguKniggu-droid/onramp<br>Evidence: kniggukniggu-droid.github.io/onramp-evidence</span></p></div>
+    <div class="card"><h3>Built with</h3><p>IBM Bob IDE 2.2.1 (Plan, Agent, 3 custom modes, skills, commands, hook) and Bob Shell 2.0.5 Â· Python Â· Django Â· Flask Â· Node.js Â· GitHub Actions</p></div>
+  </div>
+  <div class="foot"><span>Team and project introduction</span><span>1</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">The developer problem</div>
+  <h2>In a real codebase, red tests don't tell you whether you broke something.</h2>
+  <div class="cols-60">
+    <div>
+      <ul>
+        <li>Newcomers inherit large repositories, local quirks and test suites that already fail on their machine.</li>
+        <li>Healthchecks (10k-star Django app): <b>29 of 1,761 tests fail on Windows</b> before anyone changes a line.</li>
+        <li>AI assistants make plausible changes fast, but "it passes" is not evidence when the baseline is red.</li>
+      </ul>
+      <p style="margin-top:0.25in"><b>Question:</b> can IBM Bob onboard onto unfamiliar code, fix a real bug and add a real feature, so that every claim can be checked?</p>
+    </div>
+    <div class="card">
+      <h3>Why it matters</h3>
+      <p>Brownfield onboarding is where developers lose the most time, and where trust in an AI partner is earned or lost. OnRamp makes Bob's work reproducible: baseline first, failing test before fix, and a report a reviewer can verify.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Project introduction</span><span>2</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">What we built</div>
+  <h2>OnRamp: one folder you drop into a repository</h2>
+  <div class="flow">
+    <div class="step"><b>/onramp</b><span>Validates the install, writes a repo profile, captures a baseline, maps the codebase.</span></div>
+    <div class="step"><b>Explorer mode</b><span>Read-only guide with file references; cannot edit or run anything.</span></div>
+    <div class="step"><b>Reproducer mode</b><span>Failing test first; the fix comes only after the pre-fix artifact exists.</span></div>
+    <div class="step"><b>Verifier mode</b><span>Re-runs tests and classifies every failure: inherited, regression, fixed, unchanged.</span></div>
+    <div class="step"><b>Evidence</b><span>Stdlib generator: sealed blind benchmarks, attached reference patches, REPORT_&lt;slug&gt;.md.</span></div>
+  </div>
+  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (49 tests).</div>
+  <div class="foot"><span>Project summary</span><span>3</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Result 1 Â· Explore</div>
+  <h2>29 failures, zero regressions</h2>
+  <div class="stats">
+    <div class="stat"><div class="n">1,761</div><div class="l">tests in the Healthchecks baseline</div></div>
+    <div class="stat"><div class="n">29</div><div class="l">inherited failures, recorded before any change</div></div>
+    <div class="stat"><div class="n">1,766</div><div class="l">tests after Bob's fix and feature</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">regressions, same 29 failing test IDs</div></div>
+  </div>
+  <ul style="margin-top:0.35in">
+    <li>26 Signal tests need <code>socket.AF_UNIX</code>, 2 use a Linux-only date format, 1 DST test needs time-zone switching. All are Windows-only, and all are classified as inherited.</li>
+    <li>Bob generated <code>CODEBASE_MAP.md</code> with its map-codebase skill, and Claude Code checked the baseline against an independent run (identical IDs).</li>
+  </ul>
+  <div class="foot"><span>Project summary</span><span>4</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Result 2 Â· Fix (blind)</div>
+  <h2>Bob vs the maintainer</h2>
+  <div class="cols-60">
+    <div>
+      <ul>
+        <li>Healthchecks pinned at <code>0968fa2</code>, the commit before the maintainer fixed a real bug: webhooks answering HTTP 205 were retried 3 times and marked failed.</li>
+        <li>Bob got only the symptoms. The brief was SHA-256 sealed before Bob opened any code.</li>
+        <li>Reproducer: the failing test (<code>3 != 1</code> requests) came first, then a 1-line fix. Verifier: 0 regressions.</li>
+        <li>Only after Bob committed did we reveal upstream <code>0a9bff9</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Honest comparison (written by Bob)</h3>
+      <p>Same root cause, same line. Bob accepts every 2xx response; the maintainer added only 205. Bob's own report concludes the narrower upstream fix is safer, because <code>HttpTransport</code> is shared by about 25 integrations.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Project summary</span><span>5</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Result 3 Â· Build and reuse</div>
+  <h2>A real feature, and a kit that is not hardcoded</h2>
+  <div class="cols">
+    <div class="card"><h3>Feature #1090 (open since 2024)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "cafÃ©"; Bob added a test and fixed it.</p></div>
+    <div class="card"><h3>Portability on a Flask app (TaskFlow)</h3><p>The kit was copied unchanged three times. Run 1 exposed Django assumptions (hardcoded paths, output parsing, file names). Bob made the kit profile-driven. Run 2 then found one parser gap, and after Bob's fix run 3 classified the failure correctly.</p></div>
+  </div>
+  <div class="note">Every gap went back to Bob as an observed failure; Claude Code never edited Bob's code. A guard mod in Claude Code blocked it from doing so.</div>
+  <div class="foot"><span>Project summary</span><span>6</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">How Bob was used</div>
+  <h2>IBM Bob as the engineering partner, end to end</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><b>Plan mode</b> designed the kit and asked 4 design questions before building.</li>
+        <li><b>Agent mode</b> built the modes, skills, commands, hook and generator, each in its own commit.</li>
+        <li><b>Custom modes</b> (Reproducer, Verifier) drove the blind fix.</li>
+        <li><b>Bob Shell (ACP)</b> ran the portability tests in other repositories.</li>
+      </ul>
+    </div>
+    <div class="card"><h3>Process, honestly</h3><p>Claude Code operated Bob at the participant's direction, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back. Every one of Bob's commits ends with <code>Generated-by: IBM Bob</code>.</p></div>
+  </div>
+  <div class="foot"><span>Tool usage</span><span>7</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Roadmap and learnings</div>
+  <h2>What we learned, and what comes next</h2>
+  <div class="cols">
+    <div class="card"><h3>Learnings</h3><ul>
+      <li>A baseline is the difference between "tests are red" and "I broke something".</li>
+      <li>Sealing the brief makes an AI fix comparable with a human one.</li>
+      <li>Bob's first plan guessed config locations; testing the kit on a second repository exposed what a single repo hides.</li>
+      <li>Budget discipline: small, fresh Bob tasks cost a fraction of long ones.</li></ul></div>
+    <div class="card"><h3>Roadmap</h3><ul>
+      <li>Profiles for pytest, Node and Java projects.</li>
+      <li>Record allowed and withheld information in every sealed benchmark.</li>
+      <li>A CI job that runs <code>gen_report.py classify</code> on every pull request.</li>
+      <li>More blind benchmarks from real upstream fixes, to score agents over time.</li></ul></div>
+  </div>
+  <div class="foot"><span>Roadmap with learnings</span><span>8</span></div>
+</section>
+
+</body>
+</html>
