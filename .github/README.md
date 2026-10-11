@@ -34,11 +34,13 @@ All kit files live under `.bob/` and `docs/onramp/`; nothing in the application 
 
 Running `.venv\Scripts\python.exe manage.py test` on Windows at commit `e10db36` gave **1 761 tests, 29 failures**.  All 29 are Windows-only:
 
-- **27** are `hc.integrations.signal` tests — they require the `signal-cli` binary, which is not available on Windows.
-- **2** are `hc.accounts.tests.test_senddeletionscheduled` — they exercise an email back-end that behaves differently on Windows.
-- **1** is `hc.api.tests.test_check_model.CheckModelTestCase.test_get_status_handles_autumn_dst_transition` — a DST edge-case that depends on the local timezone database.
+- **26** are `hc.integrations.signal` tests — they fail with `AttributeError: module 'socket' has no attribute 'AF_UNIX'`, which does not exist on Windows.
+- **2** are `hc.accounts.tests.test_senddeletionscheduled` tests — they fail with `ValueError: Invalid format string` because the strftime format used is Linux-only.
+- **1** is `hc.api.tests.test_check_model.CheckModelTestCase.test_get_status_handles_autumn_dst_transition` — fails because time-zone switching does not work on Windows.
 
 These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evidence/baseline.json) and classified as *inherited failures* (pre-existing, not introduced by any change).
+
+> **Note:** `baseline.json` records `error_type: "Unknown"` for all 29 entries because the baseline was captured from a `unittest` run without `-v`; the error types above come from direct inspection of the test sources and Windows behaviour.
 
 ---
 
@@ -48,7 +50,7 @@ These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evid
 
 **Workflow:**
 1. `seal-benchmark` recorded the brief SHA-256 and timestamp.
-2. Explorer mode traced the request; `bug-to-test` skill wrote `test_webhooks_accept_http_205` — failing (`AssertionError: 3 != 1`, call count instead of 1) — before any fix was written.  Output saved to [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt).
+2. `bug-to-test` skill wrote `test_webhooks_accept_http_205` — failing (`AssertionError: 3 != 1`, call count instead of 1) — before any fix was written.  Output saved to [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt).
 3. Reproducer mode wrote the fix (1 line in `hc/api/transports.py`).
 4. Verifier mode re-ran the test (PASS), ran the full `hc.integrations.webhook` suite, and `classify` reported **0 regressions**.
 5. `attach-patch` recorded the upstream maintainer's later fix ([`reference_upstream_0a9bff9.patch`](../docs/onramp/evidence/reference_upstream_0a9bff9.patch)) for comparison.
@@ -70,43 +72,42 @@ The upstream choice is deliberately conservative: `HttpTransport` is the shared 
 
 ### Pretty-printed JSON feature — issue #1090
 
-A second task (issue [#1090](https://github.com/healthchecks/healthchecks/issues/1090)) asked for non-ASCII characters in JSON ping bodies to be displayed as literal UTF-8 rather than `\uXXXX` escape sequences in the ping-detail view.
+Issue [#1090](https://github.com/healthchecks/healthchecks/issues/1090) asked for JSON ping bodies to be pretty-printed in the ping-detail view.  Commit `786c034` implemented this by passing the parsed JSON through `json.dumps` with `indent=2`, keeping the **Download Original** link byte-for-byte unchanged.  A follow-up commit `e4032c2` added `ensure_ascii=False` after a reviewer noticed that `json.dumps` was escaping non-ASCII characters such as `café` as `\u00e9`.
 
-The pre-fix test ([`pre_fix_non_ascii_json_body.txt`](../docs/onramp/evidence/pre_fix_non_ascii_json_body.txt)) confirmed the failure:
+The pre-fix test ([`pre_fix_non_ascii_json_body.txt`](../docs/onramp/evidence/pre_fix_non_ascii_json_body.txt)) confirmed the failure after the pretty-print change was in place:
 
 ```
 AssertionError: False is not true : Couldn't find 'café' in the following response
 (body contained \u00e9 and \u2705 escape sequences instead of literal UTF-8 characters)
 ```
 
-The fix added `ensure_ascii=False` to the `json.dumps` call in the ping-details view.
-
 ---
 
 ## Portability — TaskFlow (Flask)
 
-The kit (`.bob/` directory and `docs/onramp/`) was copied unchanged into a separate Flask project called TaskFlow.  Only [`docs/onramp/profile.json`](../docs/onramp/profile.json) was updated to reflect the Flask test runner and app structure.
+The `.bob/` directory was copied unchanged into a separate Flask project called TaskFlow.  Only [`docs/onramp/profile.json`](../docs/onramp/profile.json) was updated to reflect the Flask test runner and app structure.  All three runs validated the installation, created the profile, captured the baseline, and generated the codebase map; none ran a bug-to-test loop, none used pytest directly, and no kit files were edited in the TaskFlow project.
 
-- **First run** exposed that the `map-codebase` skill contained Django-specific instructions (references to `manage.py`, `hc/<app>/tests/`, `BaseTestCase`) that did not match Flask conventions.  The skill walked the wrong directories and produced an incomplete map.
-- **Second run** used revised skill instructions adapted to Flask's `pytest` runner and blueprint structure.  The map was correct but the post-edit hook command (`python manage.py test`) still referenced Django syntax and produced a shell error.
-- **Third run** worked: `/onramp` produced a valid `CODEBASE_MAP.md`, the hook fired correctly, and the bug-to-test → fix → verify loop completed with a passing test and 0 regressions.  **Known limitations on TaskFlow:** the `map-codebase` skill's URL-tracing step assumes a single `urls.py` file; Flask's blueprint registration requires reading multiple files and the skill does not instruct Bob to follow blueprint `url_prefix` chains automatically.
+- **Run 1** exposed Django assumptions baked into the kit: the post-edit hook was hardcoded to `hc/`, output parsing was Django-only, baseline storage used `baseline.txt` instead of `baseline.json`, the Reproducer mode's edit scope was Django-specific, and several skill steps referenced Django conventions.  These were fixed in commits `4facc4b` and `6be3235`.
+- **Run 2** found that `unittest` error types were recorded as `"Unknown"` when the run lacked `-v`.  Fixed in commit `8165552`.
+- **Run 3** recorded `AssertionError` correctly.  **Known limitations from run 3:** on Windows the profile's test command must use the venv's own Python executable, and failures from `unittest` runs without `-v` lose the module path in the recorded id.
 
 ---
 
 ## Quick start
 
-**Drop the kit into another repository:**
+**Drop the kit into another repository** — copy only `.bob/`; `docs/onramp/` holds Healthchecks-specific evidence and should not be copied:
 
 ```
 cp -r .bob/ <your-repo>/.bob/
-cp -r docs/onramp/ <your-repo>/docs/onramp/
 ```
 
-Edit [`docs/onramp/profile.json`](../docs/onramp/profile.json) — update `test_runner`, `app_root`, `apps`, and `test_file_pattern` for your project.  Then open Bob and run:
+Then open Bob in the new repository and run:
 
 ```
 /onramp
 ```
+
+The command will create `docs/onramp/profile.json` for the new project and walk you through the rest.
 
 **Run the kit's own tests:**
 
