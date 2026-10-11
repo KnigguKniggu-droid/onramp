@@ -68,6 +68,40 @@ _MULTI_FAIL_OUTPUT = textwrap.dedent("""\
     FAILED (failures=2, errors=1)
 """)
 
+# Plain unittest output (no class/module in the FAIL: line)
+_PLAIN_OK_OUTPUT = textwrap.dedent("""\
+    .
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.001s
+
+    OK
+""")
+
+_PLAIN_FAIL_OUTPUT = textwrap.dedent("""\
+    F
+    ======================================================================
+    FAIL: test_divide_by_zero (test_math.MathTestCase.test_divide_by_zero)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "test_math.py", line 8, in test_divide_by_zero
+        self.assertEqual(divide(1, 0), 0)
+    AssertionError: ZeroDivisionError raised
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.002s
+
+    FAILED (failures=1)
+""")
+
+# Plain unittest without class context (older pattern)
+_PLAIN_FAIL_NO_CLASS = textwrap.dedent("""\
+    FAIL: test_something
+    AssertionError: 1 != 2
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.001s
+
+    FAILED (failures=1)
+""")
+
 _DIFF_ONE_FILE = textwrap.dedent("""\
     diff --git a/hc/api/views.py b/hc/api/views.py
     index abc123..def456 100644
@@ -169,6 +203,29 @@ class TestRunResult(unittest.TestCase):
     def test_first_error_type_attributeerror(self):
         r = gr.RunResult(_ERROR_OUTPUT)
         self.assertIn("Error", r.first_error_type())
+
+    # --- plain unittest format ---
+
+    def test_plain_ok_passed(self):
+        r = gr.RunResult(_PLAIN_OK_OUTPUT)
+        self.assertTrue(r.passed)
+        self.assertEqual(r.tests_run, 1)
+        self.assertEqual(r.fail_ids, [])
+
+    def test_plain_fail_detected(self):
+        r = gr.RunResult(_PLAIN_FAIL_OUTPUT)
+        self.assertFalse(r.passed)
+        self.assertEqual(r.tests_run, 1)
+        self.assertIn("test_math.MathTestCase.test_divide_by_zero", r.fail_ids)
+
+    def test_plain_fail_no_class_detected(self):
+        r = gr.RunResult(_PLAIN_FAIL_NO_CLASS)
+        self.assertFalse(r.passed)
+        self.assertIn("test_something", r.fail_ids)
+
+    def test_plain_fail_error_type(self):
+        r = gr.RunResult(_PLAIN_FAIL_OUTPUT)
+        self.assertIn("AssertionError", r.first_error_type())
 
 
 # ---------------------------------------------------------------------------

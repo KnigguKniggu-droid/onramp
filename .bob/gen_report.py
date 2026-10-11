@@ -63,24 +63,42 @@ def _evidence_dir(profile: dict[str, Any]) -> Path:
 
 
 # ---------------------------------------------------------------------------
-# Django test-output parser
+# Test-output parser (Django and plain unittest)
+#
+# Both emit the same "Ran N test(s)" line and "OK" / "FAILED" summary.
+# Failure/error lines may be:
+#   Django:          FAIL: test_foo (pkg.Module.test_foo)
+#   plain unittest:  FAIL: test_foo
+# We parse both formats.
 # ---------------------------------------------------------------------------
 
 _RESULT_RE = re.compile(r"^(OK|FAIL(?:ED)?)", re.MULTILINE)
 _RAN_RE = re.compile(r"Ran (\d+) tests?")
-# Django formats the ID as:  FAIL: test_method (module.Class.test_method)
-# We capture the full dotted ID from the parentheses when present,
-# otherwise fall back to the whole suffix.
+# Captures:  group(1) = bare token,  group(2) = dotted ID inside parens (optional)
 _FAIL_ID_RE = re.compile(
-    r"^(?:FAIL|ERROR): \S+ \((\S+)\)",
+    r"^(?:FAIL|ERROR): (\S+)(?: \((\S+)\))?",
     re.MULTILINE,
 )
-_ERROR_TYPE_RE = re.compile(r"(AssertionError|Error)[:\s]")
+_ERROR_TYPE_RE = re.compile(
+    r"(AssertionError|AttributeError|TypeError|ValueError|Error)[:\s]"
+)
 _FAILURES_SUMMARY_RE = re.compile(r"FAILED \((?:failures=(\d+))?,?\s*(?:errors=(\d+))?\)")
 
 
+def _parse_fail_ids(raw: str) -> list[str]:
+    """Return fully-qualified test IDs from runner output.
+
+    Django:         FAIL: test_foo (pkg.Module.test_foo)  -> "pkg.Module.test_foo"
+    plain unittest: FAIL: test_foo                        -> "test_foo"
+    """
+    ids: list[str] = []
+    for m in _FAIL_ID_RE.finditer(raw):
+        ids.append(m.group(2) if m.group(2) else m.group(1))
+    return ids
+
+
 class RunResult:
-    """Parsed result of a Django test runner output."""
+    """Parsed result of a test runner output (Django or plain unittest)."""
 
     def __init__(self, raw: str) -> None:
         self.raw = raw
@@ -88,7 +106,7 @@ class RunResult:
         self.tests_run: int = int(m.group(1)) if m else 0
         rm = _RESULT_RE.search(raw)
         self.passed: bool = bool(rm and rm.group(1) == "OK")
-        self.fail_ids: list[str] = _FAIL_ID_RE.findall(raw)
+        self.fail_ids: list[str] = _parse_fail_ids(raw)
         self._raw_upper = raw.upper()
 
     def first_error_type(self) -> str:
