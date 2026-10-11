@@ -5,6 +5,13 @@
   "brief_sha256": "12c482dc2578402a5c77c5ae60bca4f5d61e97d7eb0b030d89454ad67342da15",
   "allowed_information": "",
   "withheld_information": "",
-  "patch_attached": false,
-  "patch_stats": null
+  "patch_attached": true,
+  "patch_stats": {
+    "files_changed": 3,
+    "lines_changed": 29,
+    "test_files": [
+      "hc/integrations/webhook/tests/test_notify.py"
+    ],
+    "tests_added": 1
+  }
 }
