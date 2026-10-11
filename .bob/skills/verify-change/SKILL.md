@@ -13,7 +13,7 @@ Follow these steps in order after a fix has been written but before committing.
 ## Step 1 — Read the profile and locate artefacts
 
 1. Read `docs/onramp/profile.json`. Extract `test_runner`, `evidence_dir`,
-   `app_root`.
+   `app_root`, and `framework` (default `"django"`).
 2. Identify the slug for this fix (should match the `pre_fix_<slug>.txt`
    artefact already saved by the bug-to-test skill).
 3. Confirm `<evidence_dir>/pre_fix_<slug>.txt` exists. If it does not,
@@ -21,15 +21,19 @@ Follow these steps in order after a fix has been written but before committing.
 
 ## Step 2 — Read the baseline
 
-Read `<evidence_dir>/baseline.txt`. This file lists failing test IDs that
-existed *before any change* in this repository. Keep this list in context
-for Step 5.
+Read `<evidence_dir>/baseline.json`. This file records failing test IDs
+that existed *before any change* in this repository. Keep this in context
+for Step 5. (The file is written by `gen_report.py capture-baseline`.)
 
 ## Step 3 — Run the targeted test
 
-Run only the test written for this bug:
+Run only the test written for this bug. For Django (`framework == "django"`):
 ```
 <test_runner> <Module.ClassName.test_method> --verbosity=2
+```
+For plain unittest or other frameworks, omit `--verbosity=2`:
+```
+<test_runner> <Module.ClassName.test_method>
 ```
 
 Capture full stdout + stderr.
@@ -47,12 +51,14 @@ Write the raw output to `<evidence_dir>/post_fix_<slug>.txt`.
 
 ## Step 6 — Run the app suite
 
-Derive the app label from the test module path (e.g.
-`hc.api.tests.test_ping` -> `hc.api`).
-
-Run:
+For **Django**: derive the app label from the test module path (e.g.
+`hc.api.tests.test_ping` -> `hc.api`) and run with `--verbosity=2`:
 ```
 <test_runner> <app_label> --verbosity=2
+```
+For **plain unittest / other**: run the full suite:
+```
+<test_runner>
 ```
 
 Capture full stdout + stderr.
@@ -61,11 +67,10 @@ Capture full stdout + stderr.
 
 Parse the app suite output for failed/errored test IDs.
 
-Compare against `baseline.txt`:
-- Tests in the failure list that are also in `baseline.txt`:
-  **pre-existing failures** — list them but do not treat as regressions.
-- Tests in the failure list that are NOT in `baseline.txt`:
-  **regressions** — this fix introduced new failures.
+Compare against `baseline.json` (field `failing[].id`):
+- IDs also in the baseline: **pre-existing failures** — list but do not treat
+  as regressions.
+- IDs not in the baseline: **regressions** — the fix introduced new failures.
 
 If any regressions exist, stop and report them. Do not proceed until they
 are resolved.

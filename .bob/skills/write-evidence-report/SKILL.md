@@ -21,10 +21,11 @@ Check that the following files exist (use `list_files` on `<evidence_dir>`):
 - `pre_fix_<slug>.txt`
 - `post_fix_<slug>.txt`
 - `diff_<slug>.txt`
-- `baseline.txt`
+- `baseline.json` (optional but recommended — produced by `gen_report.py capture-baseline`)
 
-If any are missing, stop and tell the user which artefact is absent and
-which skill produces it.
+If any of the first three are missing, stop and tell the user which artefact
+is absent and which skill produces it. Missing `baseline.json` is non-fatal;
+the generator will note "N/A" for regression counts.
 
 ## Step 3 — Run the generator
 

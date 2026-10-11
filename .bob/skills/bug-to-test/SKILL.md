@@ -49,9 +49,13 @@ In the existing test file for the affected module:
 
 ## Step 5 — Run the test
 
-Run only the new test:
+Run only the new test. For Django (`profile.framework == "django"`):
 ```
 <test_runner> <Module.ClassName.test_method> --verbosity=2
+```
+For plain unittest or other frameworks, omit `--verbosity=2`:
+```
+<test_runner> <Module.ClassName.test_method>
 ```
 
 Capture the full stdout + stderr output.

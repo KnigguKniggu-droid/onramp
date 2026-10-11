@@ -41,13 +41,13 @@ customModes:
       write a failing test before touching production code.
     customInstructions: >-
       Read docs/onramp/profile.json to get the exact test runner command,
-      app-path pattern, and evidence directory for this repository before
+      source roots, and evidence directory for this repository before
       starting any work. Follow the bug-to-test skill step-by-step. Save
       pre_fix_<slug>.txt before writing any fix.
     groups:
       - read
       - - edit
-        - fileRegex: "hc/.*\\.py$"
+        - fileRegex: ".*\\.py$"
       - execute
       - skill
       - todo
@@ -70,7 +70,7 @@ customModes:
     customInstructions: >-
       Read docs/onramp/profile.json first. Run the targeted test, capture
       output, run the app suite, compare failing IDs against the baseline in
-      docs/onramp/evidence/baseline.txt. Use the verify-change skill and
+      docs/onramp/evidence/baseline.json. Use the verify-change skill and
       write-evidence-report skill to produce REPORT_<slug>.md. Never edit
       source files.
     groups:
