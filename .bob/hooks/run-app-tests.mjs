@@ -76,12 +76,13 @@ const result = spawnSync(cmd, {
 
 const output = (result.stdout ?? "") + (result.stderr ?? "");
 
-// Extract the summary line (last non-empty line of the output)
-const lines = output.split("\n").filter((l) => l.trim());
-const summary = lines[lines.length - 1] ?? "";
+// Extract the Django summary line: "OK" or "FAILED (failures=N)"
+// Django prints this before the database teardown message.
+const summaryMatch = output.match(/^(OK|FAILED[^\n]*)/m);
+const summary = summaryMatch ? summaryMatch[1] : (output.split("\n").filter((l) => l.trim()).pop() ?? "");
 
-// Determine pass/fail from the Django runner output
-const passed = /^OK/.test(summary) || output.includes("\nOK");
+// Determine pass/fail
+const passed = /^OK/.test(summary);
 const statusIcon = passed ? "PASS" : "FAIL";
 
 process.stdout.write(
