@@ -434,11 +434,20 @@ class TestClassifyRun(unittest.TestCase):
         self.assertEqual(c["summary"][gr.CLASSIFICATION_REGRESSION], 1)
 
     def test_fixed_failure(self):
+        # A baseline failing test that appears in the run output and passes
+        # must be FIXED.  The run here explicitly names the test and says "ok".
         baseline = _make_baseline(
             tests_run=10,
             failing_ids=["hc.api.tests.T.test_old"],
         )
-        c = gr.classify_run(_OK_OUTPUT, baseline)
+        run_output = textwrap.dedent("""\
+            test_old (hc.api.tests.T.test_old) ... ok
+            ----------------------------------------------------------------------
+            Ran 1 test in 0.010s
+
+            OK
+        """)
+        c = gr.classify_run(run_output, baseline)
         self.assertIn("hc.api.tests.T.test_old", c["fixed"])
         self.assertEqual(c["inherited"], [])
         self.assertEqual(c["regressions"], [])
@@ -667,6 +676,193 @@ class TestBuildParser(unittest.TestCase):
         args = parser.parse_args(["seal-benchmark", "myslug", "--brief-file", "brief.md"])
         self.assertEqual(args.slug, "myslug")
         self.assertEqual(args.brief_file, "brief.md")
+
+
+# ---------------------------------------------------------------------------
+# Verbose per-test outcome parser  (new required behaviour)
+# ---------------------------------------------------------------------------
+
+# Baseline has tests A, B, C, F1, F2; F1 and F2 are failing.
+_BASELINE_ABCF1F2 = {
+    "version": 1, "commit": "abc", "os": "Linux", "python": "3.11",
+    "command": "python manage.py test",
+    "tests_run": 5,
+    "failing": [
+        {"id": "M.C.F1", "error_type": "AssertionError"},
+        {"id": "M.C.F2", "error_type": "AssertionError"},
+    ],
+    "exit_status": 1, "duration_s": 1.0,
+    "timestamp": "2025-01-01T00:00:00+00:00", "output_hash": "x",
+}
+
+
+def _verbose_run(*entries: tuple[str, str], ran: int | None = None,
+                 terminal: str = "OK") -> str:
+    """Build a fake Django --verbosity=2 runner output.
+
+    entries: list of (short_name, dotted_id, outcome) where outcome is
+             'ok', 'FAIL', 'ERROR', or 'skipped "reason"'.
+    """
+    lines = []
+    for short, full_id, outcome in entries:
+        lines.append(f"{short} ({full_id}) ... {outcome}")
+    lines.append("-" * 70)
+    actual_ran = ran if ran is not None else len(entries)
+    lines.append(f"Ran {actual_ran} test in 0.010s")
+    lines.append("")
+    lines.append(terminal)
+    return "\n".join(lines) + "\n"
+
+
+class TestParsePerTestOutcomes(unittest.TestCase):
+    """classify_run must parse verbose ok/FAIL/ERROR/skipped lines."""
+
+    def test_full_run_unchanged(self):
+        """All baseline tests present, F1/F2 still fail, A/B/C pass."""
+        out = _verbose_run(
+            ("A", "M.C.A", "ok"),
+            ("B", "M.C.B", "ok"),
+            ("C", "M.C.C", "ok"),
+            ("F1", "M.C.F1", "FAIL"),
+            ("F2", "M.C.F2", "FAIL"),
+            ran=5, terminal="FAILED (failures=2)",
+        )
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        self.assertEqual(c["fixed"], [])
+        self.assertEqual(c["not_run"], [])
+        self.assertEqual(sorted(c["inherited"]), ["M.C.F1", "M.C.F2"])
+        self.assertEqual(c["regressions"], [])
+        self.assertEqual(c["run_scope"], "FULL")
+
+    def test_targeted_run_a_only_no_fixed(self):
+        """Targeted run of A only: F1, F2 not run → must NOT appear in fixed."""
+        out = _verbose_run(
+            ("A", "M.C.A", "ok"),
+            ran=1, terminal="OK",
+        )
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        self.assertEqual(c["fixed"], [])
+        self.assertIn("M.C.F1", c["not_run"])
+        self.assertIn("M.C.F2", c["not_run"])
+        self.assertEqual(c["run_scope"], "TARGETED")
+
+    def test_new_failure_b(self):
+        """B fails (was passing) → REGRESSION, not inherited."""
+        out = _verbose_run(
+            ("A", "M.C.A", "ok"),
+            ("B", "M.C.B", "FAIL"),
+            ("C", "M.C.C", "ok"),
+            ("F1", "M.C.F1", "FAIL"),
+            ("F2", "M.C.F2", "FAIL"),
+            ran=5, terminal="FAILED (failures=3)",
+        )
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        self.assertIn("M.C.B", c["regressions"])
+        self.assertNotIn("M.C.B", c["inherited"])
+        self.assertEqual(c["fixed"], [])
+
+    def test_f1_fixed(self):
+        """F1 ran and passed → FIXED; F2 still failing → INHERITED."""
+        out = _verbose_run(
+            ("A", "M.C.A", "ok"),
+            ("B", "M.C.B", "ok"),
+            ("C", "M.C.C", "ok"),
+            ("F1", "M.C.F1", "ok"),
+            ("F2", "M.C.F2", "FAIL"),
+            ran=5, terminal="FAILED (failures=1)",
+        )
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        self.assertIn("M.C.F1", c["fixed"])
+        self.assertIn("M.C.F2", c["inherited"])
+        self.assertEqual(c["not_run"], [])
+        self.assertEqual(c["regressions"], [])
+
+    def test_empty_output_inconclusive(self):
+        """Empty output → INCONCLUSIVE run."""
+        c = gr.classify_run("", _BASELINE_ABCF1F2)
+        self.assertEqual(c["valid"], False)
+        self.assertEqual(c["fixed"], [])
+        self.assertEqual(c["regressions"], [])
+
+    def test_crashed_run_no_ran_n_inconclusive(self):
+        """Output without 'Ran N tests' → INCONCLUSIVE."""
+        out = "Traceback (most recent call last):\n  ...\nSystemExit: 1\n"
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        self.assertEqual(c["valid"], False)
+        self.assertEqual(c["fixed"], [])
+
+    def test_unparseable_output_inconclusive(self):
+        """Garbage (including UTF-16 bytes as a str) → INCONCLUSIVE."""
+        out = "\xff\xfe some binary noise"
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        self.assertEqual(c["valid"], False)
+
+    def test_discovery_change_c_renamed_f2_removed_f3_new(self):
+        """C renamed, F2 removed from suite, F3 is new and failing."""
+        out = _verbose_run(
+            ("A", "M.C.A", "ok"),
+            ("B", "M.C.B", "ok"),
+            ("C_new", "M.C.C_new", "ok"),   # C renamed
+            ("F1", "M.C.F1", "FAIL"),
+            ("F3", "M.C.F3", "FAIL"),        # new failure
+            ran=5, terminal="FAILED (failures=2)",
+        )
+        c = gr.classify_run(out, _BASELINE_ABCF1F2)
+        # F2 was baseline failing but absent from this run → not_run, not fixed
+        self.assertIn("M.C.F2", c["not_run"])
+        self.assertNotIn("M.C.F2", c["fixed"])
+        # F3 is a new failure (not in baseline) → regression
+        self.assertIn("M.C.F3", c["regressions"])
+        # discovery changes
+        self.assertIn("M.C.C", c.get("removed_ids", []))
+        self.assertIn("M.C.C_new", c.get("added_ids", []))
+
+
+# ---------------------------------------------------------------------------
+# Robust file reading (BOM stripping / UTF-16 detection)
+# ---------------------------------------------------------------------------
+
+class TestReadEvidenceFile(unittest.TestCase):
+
+    def test_utf8_bom_stripped(self):
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as f:
+            # Write UTF-8 BOM + content
+            f.write(b"\xef\xbb\xbf" + b"diff --git a/foo.py b/foo.py\n")
+            name = f.name
+        try:
+            text = gr.read_evidence_file(Path(name))
+            self.assertFalse(text.startswith("\ufeff"),
+                             "BOM must be stripped from UTF-8 file")
+            self.assertIn("diff --git", text)
+        finally:
+            import os; os.unlink(name)
+
+    def test_utf16le_detected_and_decoded(self):
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as f:
+            content = "Ran 5 tests in 0.1s\n\nOK\n"
+            f.write(content.encode("utf-16-le"))  # no BOM — bare LE
+            # Actually write with BOM so it's standard UTF-16
+            f.seek(0); f.truncate()
+            f.write(b"\xff\xfe" + content.encode("utf-16-le"))
+            name = f.name
+        try:
+            text = gr.read_evidence_file(Path(name))
+            self.assertIn("Ran 5 tests", text)
+            self.assertFalse(text.startswith("\ufeff"),
+                             "BOM must be stripped from UTF-16 file too")
+        finally:
+            import os; os.unlink(name)
+
+    def test_plain_utf8_reads_fine(self):
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False,
+                                         mode="w", encoding="utf-8") as f:
+            f.write("Ran 3 tests in 0.1s\n\nOK\n")
+            name = f.name
+        try:
+            text = gr.read_evidence_file(Path(name))
+            self.assertIn("Ran 3 tests", text)
+        finally:
+            import os; os.unlink(name)
 
 
 if __name__ == "__main__":
