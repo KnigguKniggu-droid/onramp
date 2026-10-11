@@ -3,7 +3,7 @@
   "repo_name": "Healthchecks",
   "framework": "django",
   "venv_activate": ".venv\\Scripts\\activate",
-  "test_runner": "python manage.py test",
+  "test_runner": ".venv\\Scripts\\python.exe manage.py test",
   "settings_module": "hc.settings",
   "app_root": "hc",
   "source_roots": ["hc"],

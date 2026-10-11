@@ -30,7 +30,7 @@ which skill produces it.
 
 Run:
 ```
-python docs/onramp/gen_report.py <slug>
+python .bob/gen_report.py report <slug>
 ```
 
 The script reads the artefacts, compares against the baseline, and writes

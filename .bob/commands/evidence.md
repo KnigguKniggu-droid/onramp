@@ -26,13 +26,13 @@ Confirm these files exist in `<evidence_dir>`:
 If any are missing, tell the user which skill produces each one:
 - `pre_fix_<slug>.txt` — bug-to-test skill
 - `post_fix_<slug>.txt` and `diff_<slug>.txt` — verify-change skill
-- `baseline.txt` — captured once by running `python docs/onramp/gen_report.py --baseline`
+- `baseline.txt` — captured once by running `python .bob/gen_report.py capture-baseline`
 
 ### 3 — Run the generator
 
 Run:
 ```
-python docs/onramp/gen_report.py <slug>
+python .bob/gen_report.py report <slug>
 ```
 
 If the script exits non-zero, print the error and stop.
