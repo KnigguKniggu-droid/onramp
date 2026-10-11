@@ -21,12 +21,12 @@ Confirm these files exist in `<evidence_dir>`:
 - `pre_fix_<slug>.txt`
 - `post_fix_<slug>.txt`
 - `diff_<slug>.txt`
-- `baseline.txt`
+- `baseline.json`
 
 If any are missing, tell the user which skill produces each one:
 - `pre_fix_<slug>.txt` — bug-to-test skill
 - `post_fix_<slug>.txt` and `diff_<slug>.txt` — verify-change skill
-- `baseline.txt` — captured once by running `python .bob/gen_report.py capture-baseline`
+- `baseline.json` — captured once by running `python .bob/gen_report.py capture-baseline`
 
 ### 3 — Run the generator
 
