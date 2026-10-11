@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "commit": "5b435a733d53e29d53a385d10a9a058f7993c0ed",
+  "note": "Reclassified: error_type populated by post-8165552 parser on fresh run",
+  "os": "Windows",
+  "python": "3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]",
+  "command": ".venv\\Scripts\\python.exe manage.py test",
+  "tests_run": 1767,
+  "failing": [
+    {
+      "id": "hc.accounts.tests.test_senddeletionscheduled.SendDeletionScheduledTestCase.test_it_notifies_channel",
+      "error_type": "ValueError"
+    },
+    {
+      "id": "hc.accounts.tests.test_senddeletionscheduled.SendDeletionScheduledTestCase.test_it_skips_email_channels_of_team_members",
+      "error_type": "ValueError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_checks_jsonrpc_id",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_does_not_escape_special_characters",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_does_not_show_more_than_10_other_checks",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_error_code",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_missing_jsonrpc_id",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_null_data",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_oserror",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_other_checks_with_no_last_ping",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_rate_limit_failure",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_reason_fail",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_special_characters",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_unexpected_payload",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_unregistered_and_null_number",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_unregistered_failure",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_handles_username",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_lists_other_down_checks",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_reports_down_duration",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_retries_network_failure",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_shows_all_other_checks_up_note",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_shows_cron_schedule_and_tz",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_shows_exitstatus",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_shows_oncalendar_schedule_and_tz",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_notify.NotifySignalTestCase.test_it_works",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_signal_captcha.SignalCaptchaTestCase.test_it_checks_jsonrpc_id",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_signal_captcha.SignalCaptchaTestCase.test_it_removes_protocol_prefix",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.integrations.signal.tests.test_signal_captcha.SignalCaptchaTestCase.test_it_works",
+      "error_type": "AttributeError"
+    },
+    {
+      "id": "hc.api.tests.test_check_model.CheckModelTestCase.test_get_status_handles_autumn_dst_transition",
+      "error_type": "AssertionError"
+    }
+  ],
+  "exit_status": 1,
+  "timestamp": "2026-10-11T22:03:06.358989+00:00",
+  "output_hash": "4140db791975fb7706f533e277c3d885701cc223e7244e553c975b05de453a57"
+}
