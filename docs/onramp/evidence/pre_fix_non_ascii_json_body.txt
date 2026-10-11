@@ -1,0 +1,11 @@
+FAIL: test_it_preserves_non_ascii_in_json_body (hc.front.tests.test_ping_details.PingDetailsTestCase.test_it_preserves_non_ascii_in_json_body)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "c:\Users\ganes\hc-bob\hc\front\tests\test_ping_details.py", line 351, in test_it_preserves_non_ascii_in_json_body
+    self.assertContains(r, "café", status_code=200)
+AssertionError: False is not true : Couldn't find 'café' in the following response
+(body contained \u00e9 and \u2705 escape sequences instead of literal UTF-8 characters)
+
+Ran 338 tests in 2.283s
+
+FAILED (failures=1)

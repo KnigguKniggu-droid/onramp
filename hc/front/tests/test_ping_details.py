@@ -342,6 +342,15 @@ class PingDetailsTestCase(BaseTestCase):
         # Django HTML-escapes quotes; the raw fragment must appear in output
         self.assertContains(r, "{&quot;key&quot;: &quot;value&quot;", status_code=200)
 
+    def test_it_preserves_non_ascii_in_json_body(self) -> None:
+        body = '{"name": "café", "emoji": "✅"}'.encode()
+        Ping.objects.create(owner=self.check, n=1, body_raw=body)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "café", status_code=200)
+        self.assertContains(r, "✅")
+
     def test_download_original_returns_raw_bytes(self) -> None:
         body = b'{"b": 2, "a": 1}'
         Ping.objects.create(owner=self.check, n=1, body_raw=body)

@@ -763,7 +763,7 @@ def ping_details(
     if body_str and ping.scheme != "email":
         try:
             parsed_json = json.loads(body_str)
-            body_str = json.dumps(parsed_json, indent=2)
+            body_str = json.dumps(parsed_json, indent=2, ensure_ascii=False)
         except ValueError:
             pass
 
