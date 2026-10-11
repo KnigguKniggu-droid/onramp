@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "^(write_file|apply_diff|search_and_replace|insert_content)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .bob/hooks/run-app-tests.mjs",
+            "timeout": 130
+          }
+        ]
+      }
+    ]
+  }
+}
