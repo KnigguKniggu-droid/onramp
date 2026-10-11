@@ -10,12 +10,12 @@
 - **Result:** FAIL
 - **Tests run:** 1
 - **Failure reason:** AssertionError: 3 != 1
-- **Raw output:** `C:\Users\ganes\hc-bob\docs\onramp\evidence/pre_fix_webhook-205.txt`
+- **Raw output:** `<repo>\docs\onramp\evidence/pre_fix_webhook-205.txt`
 
 ## Post-Fix Test Run
 - **Result:** PASS
 - **Tests run:** 1
-- **Raw output:** `C:\Users\ganes\hc-bob\docs\onramp\evidence/post_fix_webhook-205.txt`
+- **Raw output:** `<repo>\docs\onramp\evidence/post_fix_webhook-205.txt`
 
 ## Regression Check
 - **Pre-existing failures (baseline):** 29
@@ -27,7 +27,7 @@
 
 ## Diff
 - **File(s) changed:** hc/integrations/webhook/tests/test_notify.py
-- **Raw diff:** `C:\Users\ganes\hc-bob\docs\onramp\evidence/diff_webhook-205.txt`
+- **Raw diff:** `<repo>\docs\onramp\evidence/diff_webhook-205.txt`
 
 ## Verification Flags
 - [x] Test existed before fix and was FAIL

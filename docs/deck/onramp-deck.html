@@ -110,15 +110,15 @@
   <div class="cols-60">
     <div>
       <ul>
-        <li>Healthchecks pinned at <code>0968fa2</code>, the commit before the maintainer fixed a real bug: webhooks answering HTTP 205 were retried 3 times and marked failed.</li>
-        <li>Bob got only the symptoms. The brief was SHA-256 sealed before Bob opened any code.</li>
-        <li>Reproducer: the failing test (<code>3 != 1</code> requests) came first, then a 1-line fix. Verifier: 0 regressions.</li>
+        <li>Healthchecks pinned at upstream <code>0968fa2</code> (the benchmark itself was sealed at kit commit <code>a3acbc3</code>), the commit before the maintainer fixed a real bug: webhooks answering HTTP 205 were retried 3 times and marked failed.</li>
+        <li>Bob got only the symptoms. The brief was SHA-256 sealed before the issue-specific work began (Bob had already mapped the codebase).</li>
+        <li>Reproducer: the failing test (<code>3 != 1</code> requests) came first, then a 1-line fix. Independent full-suite run: 0 regressions.</li>
         <li>Only after Bob committed did we reveal upstream <code>0a9bff9</code>.</li>
       </ul>
     </div>
     <div class="card">
       <h3>Honest comparison (written by Bob)</h3>
-      <p>Same root cause, same line. Bob accepts every 2xx response; the maintainer added only 205. Bob's own report concludes the narrower upstream fix is safer, because <code>HttpTransport</code> is shared by about 25 integrations.</p>
+      <p>Same defect, same line, different policy. Our brief said "a 2xx response such as 205" should succeed; Bob accepts every 2xx response; the maintainer added only 205. Bob's own report concludes the narrower upstream fix is safer, because <code>HttpTransport</code> is shared by about 25 integrations.</p>
     </div>
   </div>
   <div class="foot"><span>Project summary</span><span>5</span></div>
