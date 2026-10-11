@@ -311,3 +311,41 @@ class PingDetailsTestCase(BaseTestCase):
         with patch("hc.api.models.get_object", Mock(side_effect=GetObjectError)):
             r = self.client.get(self.url)
         self.assertContains(r, "please check back later", status_code=200)
+
+    def test_it_pretty_prints_json_body(self) -> None:
+        body = b'{"b": 2, "a": 1}'
+        Ping.objects.create(owner=self.check, n=1, body_raw=body)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        # Django HTML-escapes quotes as &quot; in template output
+        self.assertContains(r, "&quot;b&quot;: 2", status_code=200)
+        self.assertContains(r, "&quot;a&quot;: 1")
+        # Keys must appear in original order (b before a)
+        content = r.content.decode()
+        self.assertLess(content.index("&quot;b&quot;"), content.index("&quot;a&quot;"))
+
+    def test_it_leaves_non_json_body_as_is(self) -> None:
+        body = b"plain text body"
+        Ping.objects.create(owner=self.check, n=1, body_raw=body)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "plain text body", status_code=200)
+
+    def test_it_leaves_invalid_json_body_as_is(self) -> None:
+        body = b'{"key": "value"'  # missing closing brace
+        Ping.objects.create(owner=self.check, n=1, body_raw=body)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        # Django HTML-escapes quotes; the raw fragment must appear in output
+        self.assertContains(r, "{&quot;key&quot;: &quot;value&quot;", status_code=200)
+
+    def test_download_original_returns_raw_bytes(self) -> None:
+        body = b'{"b": 2, "a": 1}'
+        Ping.objects.create(owner=self.check, n=1, body_raw=body)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(f"/checks/{self.check.code}/pings/1/body/")
+        self.assertEqual(r.content, body)

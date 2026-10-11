@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import email
+import json
 import logging
 import os
 import re
@@ -758,10 +759,18 @@ def ping_details(
     except Ping.GetBodyError:
         body_bytes = None
 
+    body_str = body_bytes.decode(errors="replace") if body_bytes else None
+    if body_str and ping.scheme != "email":
+        try:
+            parsed_json = json.loads(body_str)
+            body_str = json.dumps(parsed_json, indent=2)
+        except ValueError:
+            pass
+
     ctx = {
         "check": check,
         "ping": ping,
-        "body": body_bytes.decode(errors="replace") if body_bytes else None,
+        "body": body_str,
         "plain": None,
         "html": None,
         "active": None,
