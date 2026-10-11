@@ -79,6 +79,12 @@ _FAIL_ID_RE = re.compile(
     r"^(?:FAIL|ERROR): (\S+)(?: \((\S+)\))?",
     re.MULTILINE,
 )
+# Verbose per-test outcome line:  "short_name (dotted.id) ... ok|FAIL|ERROR|skipped ..."
+# group(1) = dotted ID (inside parens), group(2) = outcome token
+_VERBOSE_LINE_RE = re.compile(
+    r"^\S.*?\((\S+)\)\s+\.\.\.\s+(ok|FAIL|ERROR|skipped\b.*)",
+    re.MULTILINE,
+)
 _ERROR_TYPE_RE = re.compile(
     r"(AssertionError|AttributeError|TypeError|ValueError|Error)[:\s]"
 )
@@ -268,6 +274,26 @@ def load_baseline(evidence_dir: Path) -> dict[str, Any] | None:
 
 
 # ---------------------------------------------------------------------------
+# Robust evidence-file reader  (BOM stripping / UTF-16 detection)
+# ---------------------------------------------------------------------------
+
+def read_evidence_file(path: Path) -> str:
+    """Read a text file robustly: detect UTF-16 (FF FE / FE FF BOM) and
+    UTF-8 BOM (EF BB BF), strip the BOM, and return a clean Python str."""
+    raw = path.read_bytes()
+    if raw[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        # UTF-16 with BOM
+        text = raw.decode("utf-16")
+    elif raw[:3] == b"\xef\xbb\xbf":
+        # UTF-8 BOM
+        text = raw[3:].decode("utf-8")
+    else:
+        text = raw.decode("utf-8", errors="replace")
+    # Strip any remaining BOM character that slipped through
+    return text.lstrip("\ufeff")
+
+
+# ---------------------------------------------------------------------------
 # Run classification
 # ---------------------------------------------------------------------------
 
@@ -276,58 +302,180 @@ CLASSIFICATION_REGRESSION = "REGRESSION"
 CLASSIFICATION_FIXED = "FIXED PRE-EXISTING FAILURE"
 CLASSIFICATION_PASS = "UNCHANGED PASS"
 CLASSIFICATION_NOT_RUN = "NOT RUN"
+CLASSIFICATION_SKIPPED = "SKIPPED"
+
+
+def _parse_verbose_outcomes(raw: str) -> dict[str, str] | None:
+    """Parse per-test verbose outcome lines.
+
+    Returns a dict mapping dotted test ID → outcome ('ok', 'FAIL', 'ERROR',
+    'skipped'), or None if no verbose lines are found at all.
+    """
+    outcomes: dict[str, str] = {}
+    for m in _VERBOSE_LINE_RE.finditer(raw):
+        fid = m.group(1)
+        outcome_token = m.group(2)
+        if outcome_token == "ok":
+            outcomes[fid] = "ok"
+        elif outcome_token.startswith("skipped"):
+            outcomes[fid] = "skipped"
+        else:
+            # FAIL or ERROR
+            outcomes[fid] = outcome_token
+    return outcomes if outcomes else None
 
 
 def classify_run(
     run_output: str,
     baseline: dict[str, Any],
 ) -> dict[str, Any]:
-    """
-    Compare a test-run output against the baseline record.
+    """Compare a test-run output against the baseline record.
+
+    Validity rules
+    --------------
+    A run is VALID only when:
+      - It has at least one verbose outcome line OR at least one FAIL/ERROR header
+      - It has a "Ran N tests" line
+      - It has a terminal OK or FAILED line
+    Otherwise the run is INCONCLUSIVE: fixed=[], regressions=[], valid=False.
+
+    Classification (only for VALID runs)
+    ------------------------------------
+      - baseline FAIL + now FAIL  → INHERITED
+      - baseline FAIL + now PASS  → FIXED   (only if the test actually ran)
+      - baseline PASS + now FAIL  → REGRESSION
+      - baseline test absent      → NOT RUN (never FIXED)
+      - skipped                   → SKIPPED
+
+    Run scope
+    ---------
+      FULL    if every test in the baseline ran in this run.
+      TARGETED otherwise.
+
+    Discovery changes
+    -----------------
+      added_ids   : IDs present in this run but absent from the full baseline
+                    test set (baseline_all_ids).
+      removed_ids : IDs present in the baseline but absent from this run's
+                    executed set (only meaningful when scope=FULL).
 
     Returns a dict with keys:
-      - inherited:  list of test IDs that failed before and still fail
-      - regressions: list of test IDs that passed before and now fail
-      - fixed:       list of test IDs that failed before and now pass
-      - unchanged_pass: count of tests that passed before and still pass
-      - not_run:     list of baseline test IDs that did not appear in this run
-      - summary: dict of counts
+      valid, run_scope, inherited, regressions, fixed, skipped,
+      unchanged_pass, not_run, added_ids, removed_ids, summary.
     """
     baseline_failing_ids: set[str] = {f["id"] for f in baseline.get("failing", [])}
-    run_result = RunResult(run_output)
-    run_failing_ids: set[str] = set(run_result.fail_ids)
+    baseline_all_ids: set[str] = (
+        set(baseline["all_ids"]) if baseline.get("all_ids") else baseline_failing_ids
+    )
+    baseline_total = baseline.get("tests_run", 0)
 
+    run_result = RunResult(run_output)
+
+    # --- Validity check ---
+    has_ran_line = bool(_RAN_RE.search(run_output))
+    has_terminal = bool(_RESULT_RE.search(run_output))
+    verbose_outcomes = _parse_verbose_outcomes(run_output)
+    has_fail_headers = bool(_FAIL_ID_RE.search(run_output))
+    has_parseable = verbose_outcomes is not None or has_fail_headers
+
+    valid = has_ran_line and has_terminal and has_parseable
+    # Extra: if the output looks like raw binary / UTF-16 noise with no ASCII
+    # structure, treat as invalid.
+    if not has_ran_line:
+        valid = False
+
+    if not valid:
+        return {
+            "valid": False,
+            "run_scope": "INCONCLUSIVE",
+            "inherited": [],
+            "regressions": [],
+            "fixed": [],
+            "skipped": [],
+            "unchanged_pass": 0,
+            "not_run": sorted(baseline_failing_ids),
+            "added_ids": [],
+            "removed_ids": [],
+            "summary": {
+                CLASSIFICATION_INHERITED: 0,
+                CLASSIFICATION_REGRESSION: 0,
+                CLASSIFICATION_FIXED: 0,
+                CLASSIFICATION_PASS: 0,
+                CLASSIFICATION_NOT_RUN: len(baseline_failing_ids),
+                CLASSIFICATION_SKIPPED: 0,
+            },
+        }
+
+    # --- Build executed-ID sets from verbose lines (preferred) or FAIL headers ---
+    if verbose_outcomes is not None:
+        executed_ids: set[str] = set(verbose_outcomes.keys())
+        run_failing_ids: set[str] = {
+            fid for fid, out in verbose_outcomes.items()
+            if out in ("FAIL", "ERROR")
+        }
+        skipped_ids: set[str] = {
+            fid for fid, out in verbose_outcomes.items() if out == "skipped"
+        }
+    else:
+        # Fall back to FAIL/ERROR headers — no pass information available
+        executed_ids = set(run_result.fail_ids)
+        run_failing_ids = set(run_result.fail_ids)
+        skipped_ids = set()
+
+    # --- Classification ---
     inherited = sorted(baseline_failing_ids & run_failing_ids)
     regressions = sorted(run_failing_ids - baseline_failing_ids)
-    fixed = sorted(baseline_failing_ids - run_failing_ids)
 
-    baseline_total = baseline.get("tests_run", 0)
+    # FIXED: baseline failing AND executed AND not failing now
+    executed_baseline_failing = baseline_failing_ids & executed_ids
+    fixed = sorted(executed_baseline_failing - run_failing_ids)
+
+    # NOT RUN: baseline failing tests that were not executed at all
+    not_run = sorted(baseline_failing_ids - executed_ids)
+
+    # Unchanged pass (approximate — we lack full per-test baseline pass list)
     baseline_pass_count = baseline_total - len(baseline_failing_ids)
-    run_pass_count = run_result.tests_run - len(run_failing_ids)
-    # For unchanged_pass we use the intersection of passing tests.
-    # Since we don't have per-test pass IDs (only fail IDs), we approximate:
-    # unchanged_pass ≈ min passing count minus newly fixed tests
-    unchanged_pass = max(0, min(baseline_pass_count, run_pass_count) - len(fixed))
+    run_pass_ids_count = len(executed_ids) - len(run_failing_ids) - len(skipped_ids)
+    unchanged_pass = max(0, min(baseline_pass_count, run_pass_ids_count) - len(fixed))
 
-    # not_run: baseline failing tests that did not appear at all in output
-    not_run: list[str] = []
-    for fid in baseline_failing_ids:
-        # If a test ID does not appear anywhere in the output it was not run
-        if fid not in run_output:
-            not_run.append(fid)
+    # --- Scope ---
+    # FULL if all baseline IDs were executed.  When all_ids is available use it;
+    # otherwise fall back to: all failing IDs ran AND count >= baseline_total.
+    if baseline.get("all_ids"):
+        all_baseline_ran = baseline_all_ids.issubset(executed_ids)
+        run_scope = "FULL" if all_baseline_ran else "TARGETED"
+    else:
+        all_baseline_failing_ran = baseline_failing_ids.issubset(executed_ids)
+        run_scope = (
+            "FULL"
+            if all_baseline_failing_ran and run_result.tests_run >= baseline_total
+            else "TARGETED"
+        )
+
+    # --- Discovery changes ---
+    # added_ids: IDs in this run not in any baseline set
+    added_ids = sorted(executed_ids - baseline_all_ids)
+    # removed_ids: baseline IDs absent from this run's executed set
+    removed_ids = sorted(baseline_all_ids - executed_ids)
 
     result = {
+        "valid": True,
+        "run_scope": run_scope,
         "inherited": inherited,
         "regressions": regressions,
         "fixed": fixed,
+        "skipped": sorted(skipped_ids),
         "unchanged_pass": unchanged_pass,
-        "not_run": sorted(not_run),
+        "not_run": not_run,
+        "added_ids": added_ids,
+        "removed_ids": removed_ids,
         "summary": {
             CLASSIFICATION_INHERITED: len(inherited),
             CLASSIFICATION_REGRESSION: len(regressions),
             CLASSIFICATION_FIXED: len(fixed),
             CLASSIFICATION_PASS: unchanged_pass,
             CLASSIFICATION_NOT_RUN: len(not_run),
+            CLASSIFICATION_SKIPPED: len(skipped_ids),
         },
     }
     return result
@@ -505,9 +653,9 @@ def generate_report(slug: str, evidence_dir: Path) -> Path:
     if not diff_path.exists():
         raise FileNotFoundError(f"Missing: {diff_path}")
 
-    pre_text = pre_path.read_text(encoding="utf-8")
-    post_text = post_path.read_text(encoding="utf-8")
-    diff_text = diff_path.read_text(encoding="utf-8")
+    pre_text = read_evidence_file(pre_path)
+    post_text = read_evidence_file(post_path)
+    diff_text = read_evidence_file(diff_path)
 
     pre_result = RunResult(pre_text)
     post_result = RunResult(post_text)
