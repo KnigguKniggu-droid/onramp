@@ -4,17 +4,19 @@ A drop-in kit that takes a developer from "never seen this repo" to a verified b
 
 > **Derived from [healthchecks/healthchecks](https://github.com/healthchecks/healthchecks) at commit `0968fa2` (BSD-3-Clause, see [LICENSE](../LICENSE)).  This repository is not affiliated with the Healthchecks project.**
 
+**[Evidence Explorer (live demo)](https://kniggukniggu-droid.github.io/onramp-evidence/)** · **[Pitch deck (PDF)](../docs/deck/OnRamp-pitch-deck.pdf)** · **[Corrections and known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md)**
+
 ---
 
 ## What the kit is
 
-All kit files live under `.bob/` and `docs/onramp/`; nothing in the application source is changed.
+The reusable kit lives under `.bob/` (plus a per-repository profile in `docs/onramp/`). The Healthchecks case study itself changes application code under `hc/` (the bug fix and the feature).
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
 | **Explorer mode** | [`.bob/custom_modes.yaml`](../.bob/custom_modes.yaml) | Read-only guide — traces requests, maps layout, answers "where does X live?" before any change |
-| **Reproducer mode** | [`.bob/custom_modes.yaml`](../.bob/custom_modes.yaml) | Enforce failing-test-first; refuses to draft a fix until `pre_fix_<slug>.txt` exists and shows `FAIL` |
-| **Verifier mode** | [`.bob/custom_modes.yaml`](../.bob/custom_modes.yaml) | Reviews evidence artefacts and gates completion; no write tools except the report |
+| **Reproducer mode** | [`.bob/custom_modes.yaml`](../.bob/custom_modes.yaml) | Failing-test-first workflow; instructed not to draft a fix until `pre_fix_<slug>.txt` exists and shows `FAIL` (an instruction, not a tool restriction) |
+| **Verifier mode** | [`.bob/custom_modes.yaml`](../.bob/custom_modes.yaml) | Reviews evidence artefacts and gates completion; edits limited to the evidence folder (it can still run commands) |
 | **`map-codebase` skill** | [`.bob/skills/map-codebase/SKILL.md`](../.bob/skills/map-codebase/SKILL.md) | Systematic walk of an unfamiliar codebase; writes `docs/onramp/CODEBASE_MAP.md` |
 | **`bug-to-test` skill** | [`.bob/skills/bug-to-test/SKILL.md`](../.bob/skills/bug-to-test/SKILL.md) | Turn a bug report into a failing test, step by step |
 | **`verify-change` skill** | [`.bob/skills/verify-change/SKILL.md`](../.bob/skills/verify-change/SKILL.md) | Re-run the targeted test, capture output, compute diff, check for regressions |
@@ -46,7 +48,7 @@ These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evid
 
 ### Blind fix — webhook HTTP 205 bug
 
-**Brief (sealed before work started):** A webhook endpoint that replies with HTTP 205 caused Healthchecks to retry the request three times and mark the integration as failed.  Expected: any 2xx response should be treated as success.  The brief was hashed and recorded in [`docs/onramp/evidence/benchmark_webhook-205.json`](../docs/onramp/evidence/benchmark_webhook-205.json) before any code was opened.
+**Brief (sealed before the issue-specific work began; Bob had already mapped the repository):** A webhook endpoint that replies with HTTP 205 caused Healthchecks to retry the request three times and mark the integration as failed.  The brief's expectation was "a 2xx response such as 205 means the notification was delivered".  The brief was hashed and recorded in [`docs/onramp/evidence/benchmark_webhook-205.json`](../docs/onramp/evidence/benchmark_webhook-205.json) at 21:05:38 UTC, before Bob started reproducing the bug.
 
 **Workflow:**
 1. `seal-benchmark` recorded the brief SHA-256 and timestamp.
@@ -107,7 +109,7 @@ Then open Bob in the new repository and run:
 /onramp
 ```
 
-The command will create `docs/onramp/profile.json` for the new project and walk you through the rest.
+`/onramp` needs `docs/onramp/profile.json`, which the kit does not create yet: copy this repository's profile as a template or ask Bob to create it first (see [known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md)).
 
 **Run the kit's own tests:**
 
@@ -132,6 +134,6 @@ python .bob/gen_report.py capture-baseline
 
 ## How it was built
 
-All engineering work — file reads, code edits, test runs, evidence capture — was done by **IBM Bob** (IDE and Bob Shell).  **Claude Code** operated Bob at the participant's direction: it issued the commands, observed the outputs, and reported failures back honestly rather than interpreting them as successes.  Results in `docs/onramp/evidence/` were produced by the kit's own tooling, not manually edited.
+IBM Bob (IDE and Bob Shell) performed the OnRamp implementation, repository exploration, debugging, testing workflows and code changes; its commits end with `Generated-by: IBM Bob`. Claude Code orchestrated Bob at the participant's direction, verified results independently, and assembled the public evidence presentation (pitch deck, Evidence Explorer, corrections). Claude's commits say so in their messages.
 
 Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/onramp/PLAN.md).
