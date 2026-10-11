@@ -483,10 +483,14 @@ class TestClassifyRun(unittest.TestCase):
                 "M.C.test_fixed",
             ],
         )
+        # Use verbose format so that test_fixed appears as "ok" (actually ran)
         run_output = textwrap.dedent("""\
-            FAIL: test_inherited (M.C.test_inherited)
-            FAIL: test_regression (M.C.test_regression)
+            test_inherited (M.C.test_inherited) ... FAIL
+            test_fixed (M.C.test_fixed) ... ok
+            test_regression (M.C.test_regression) ... FAIL
+            ----------------------------------------------------------------------
             Ran 20 tests in 2.000s
+
             FAILED (failures=2)
         """)
         c = gr.classify_run(run_output, baseline)
@@ -687,6 +691,7 @@ _BASELINE_ABCF1F2 = {
     "version": 1, "commit": "abc", "os": "Linux", "python": "3.11",
     "command": "python manage.py test",
     "tests_run": 5,
+    "all_ids": ["M.C.A", "M.C.B", "M.C.C", "M.C.F1", "M.C.F2"],
     "failing": [
         {"id": "M.C.F1", "error_type": "AssertionError"},
         {"id": "M.C.F2", "error_type": "AssertionError"},
