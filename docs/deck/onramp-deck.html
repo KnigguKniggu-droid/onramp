@@ -44,12 +44,12 @@
 
 <section class="slide">
   <div class="title-band"></div>
-  <div class="kicker" style="margin-top:0.9in">Building with IBM Bob Â· Theme 1: Explore, Fix, and Build</div>
+  <div class="kicker" style="margin-top:0.9in">Building with IBM Bob · Theme 1: Explore, Fix, and Build</div>
   <h1>OnRamp</h1>
   <p style="font-size:24pt; max-width:10.8in; margin-top:0.05in">An IBM Bob kit that takes a developer from "never seen this repo" to a verified fix and feature, with evidence behind every claim.</p>
   <div style="margin-top:0.55in" class="cols">
     <div class="card"><h3>Team</h3><p>Solo participant<br><span class="muted">Code: github.com/KnigguKniggu-droid/onramp<br>Evidence: kniggukniggu-droid.github.io/onramp-evidence</span></p></div>
-    <div class="card"><h3>Built with</h3><p>IBM Bob IDE 2.2.1 (Plan, Agent, 3 custom modes, skills, commands, hook) and Bob Shell 2.0.5 Â· Python Â· Django Â· Flask Â· Node.js Â· GitHub Actions</p></div>
+    <div class="card"><h3>Built with</h3><p>IBM Bob IDE 2.2.1 (Plan, Agent, 3 custom modes, skills, commands, hook) and Bob Shell 2.0.5 · Python · Django · Flask · Node.js · GitHub Actions</p></div>
   </div>
   <div class="foot"><span>Team and project introduction</span><span>1</span></div>
 </section>
@@ -84,12 +84,12 @@
     <div class="step"><b>Verifier mode</b><span>Re-runs tests and classifies every failure: inherited, regression, fixed, unchanged.</span></div>
     <div class="step"><b>Evidence</b><span>Stdlib generator: sealed blind benchmarks, attached reference patches, REPORT_&lt;slug&gt;.md.</span></div>
   </div>
-  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (49 tests).</div>
+  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (65 tests). After Bob's allowance ran out, Claude Code added a separately labelled normalizer/bootstrap module (<code>onramp_normalize.py</code>, 20 tests).</div>
   <div class="foot"><span>Project summary</span><span>3</span></div>
 </section>
 
 <section class="slide">
-  <div class="kicker">Result 1 Â· Explore</div>
+  <div class="kicker">Result 1 · Explore</div>
   <h2>29 failures, zero regressions</h2>
   <div class="stats">
     <div class="stat"><div class="n">1,761</div><div class="l">tests in the Healthchecks baseline</div></div>
@@ -105,7 +105,7 @@
 </section>
 
 <section class="slide">
-  <div class="kicker">Result 2 Â· Fix (blind)</div>
+  <div class="kicker">Result 2 · Fix (blind)</div>
   <h2>Bob vs the maintainer</h2>
   <div class="cols-60">
     <div>
@@ -125,13 +125,13 @@
 </section>
 
 <section class="slide">
-  <div class="kicker">Result 3 Â· Build and reuse</div>
+  <div class="kicker">Result 3 · Build and reuse</div>
   <h2>A real feature, and a kit that is not hardcoded</h2>
   <div class="cols">
-    <div class="card"><h3>Feature #1090 (open since 2024)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "cafÃ©"; Bob added a test and fixed it.</p></div>
+    <div class="card"><h3>Feature #1090 (open since 2024)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "café"; Bob added a test and fixed it.</p></div>
     <div class="card"><h3>Portability on a Flask app (TaskFlow)</h3><p>The kit was copied unchanged three times. Run 1 exposed Django assumptions (hardcoded paths, output parsing, file names). Bob made the kit profile-driven. Run 2 then found one parser gap, and after Bob's fix run 3 classified the failure correctly.</p></div>
   </div>
-  <div class="note">Every gap went back to Bob as an observed failure; Claude Code never edited Bob's code. A guard mod in Claude Code blocked it from doing so.</div>
+  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a guard mod in Claude Code blocked Claude from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, Claude-labelled files.</div>
   <div class="foot"><span>Project summary</span><span>6</span></div>
 </section>
 
