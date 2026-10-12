@@ -102,5 +102,53 @@ class Classification(unittest.TestCase):
             self.assertEqual((p["framework"], p["settings_module"]), ("django", "proj.settings"))
 
 
+class EdgeCases(unittest.TestCase):
+    """R1 edge cases from the v3 directive (Claude Code)."""
+
+    def setUp(self):
+        self.base = run(BASE)
+
+    def test_skipped_tests_are_neither_fixed_nor_regressed(self):
+        cur = run({**BASE, "F1": "skipped 'needs linux'", "A": "skipped 'slow'"})
+        r = on.classify(self.base, cur)
+        self.assertEqual(sorted(r["skipped"]), ["m.C.A", "m.C.F1"])
+        self.assertNotIn("m.C.F1", r["fixed"])
+
+    def test_expected_failure_and_unexpected_success(self):
+        n = on.normalize(log({"A": "expected failure", "B": "unexpected success"}, terminal="FAILED (unexpected successes=1)"))
+        self.assertEqual(n["outcomes"], {"m.C.A": "PASS", "m.C.B": "FAIL"})
+
+    def test_terminal_status_disagreeing_with_results_is_inconclusive(self):
+        self.assertFalse(run(BASE, terminal="OK")["valid"])
+
+    def test_warning_printed_mid_line(self):
+        text = "A (m.C.A) ... C:\\x\\base.py:63: UserWarning: no static dir\n  warnings.warn(msg)\nok\n\n" + "-" * 70 + "\nRan 1 test in 0.1s\n\nOK\n"
+        n = on.normalize(text)
+        self.assertTrue(n["valid"], n["problems"])
+        self.assertEqual(n["outcomes"], {"m.C.A": "PASS"})
+
+    def test_timeout_output_without_summary_is_inconclusive(self):
+        text = "A (m.C.A) ... ok\nB (m.C.B) ... \n*** timed out after 600s ***\n"
+        r = on.classify(self.base, on.normalize(text))
+        self.assertFalse(r["valid"])
+        self.assertEqual((r["fixed"], r["regression"], r["not_run"]), ([], [], []))
+
+    def test_baseline_problems_also_block_a_verdict(self):
+        bad_base = on.normalize("")
+        self.assertFalse(on.classify(bad_base, run(BASE))["valid"])
+
+    def test_json_written_by_powershell_redirect_is_readable(self):
+        with tempfile.TemporaryDirectory() as d:
+            for enc, raw in (("utf8-bom", b"\xef\xbb\xbf" + json.dumps(self.base).encode()),
+                             ("utf16", json.dumps(self.base).encode("utf-16"))):
+                p = Path(d, enc + ".json")
+                p.write_bytes(raw)
+                self.assertEqual(on.load_run(p), self.base, enc)
+
+    def test_crlf_and_lf_give_identical_normalization(self):
+        t = log(BASE)
+        self.assertEqual(on.normalize(t), on.normalize(t.replace("\n", "\r\n")))
+
+
 if __name__ == "__main__":
     unittest.main()

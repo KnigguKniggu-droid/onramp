@@ -140,6 +140,11 @@ def init_profile(root: Path) -> dict[str, Any]:
             "test_file_pattern": f"{tests_dir or '.'}/test_*.py", "evidence_dir": "docs/onramp/evidence"}
 
 
+def load_run(path: Path) -> dict[str, Any]:
+    """Read a normalized run, tolerating a BOM (Windows PowerShell's `>` writes one) and UTF-16."""
+    return json.loads(read_text(path))
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -151,7 +156,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(normalize(read_text(Path(a.log)), source=Path(a.log).name), indent=1))
         return 0
     if a.cmd == "classify":
-        r = classify(json.loads(Path(a.baseline).read_text(encoding="utf-8")), json.loads(Path(a.current).read_text(encoding="utf-8")))
+        r = classify(load_run(Path(a.baseline)), load_run(Path(a.current)))
         print(json.dumps(r, indent=1))
         return 0 if r["valid"] and not r["regression"] and not r["new_failure"] else 1
     root = Path(a.root).resolve()
