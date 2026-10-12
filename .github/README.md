@@ -57,7 +57,7 @@ These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evid
 4. Verifier mode re-ran the test (PASS), ran the full `hc.integrations.webhook` suite, and `classify` reported **0 regressions**.
 5. `attach-patch` recorded the upstream maintainer's later fix ([`reference_upstream_0a9bff9.patch`](../docs/onramp/evidence/reference_upstream_0a9bff9.patch)) for comparison.
 
-**Full evidence report:** [`docs/onramp/evidence/REPORT_webhook-205.md`](../docs/onramp/evidence/REPORT_webhook-205.md)
+**Evidence report:** [corrected report, 2026-10-12](../docs/evidence/CORRECTED_REPORT_webhook-205_2026-10-12.md) · [historical report — superseded; contains an incorrect classification from a targeted test run](../docs/onramp/evidence/REPORT_webhook-205.md)
 
 **Honest comparison with the maintainer's fix (commit `0a9bff9`):**
 
@@ -103,18 +103,25 @@ The `.bob/` directory was copied unchanged into a separate Flask project called 
 cp -r .bob/ <your-repo>/.bob/
 ```
 
+Create the repository profile (detects Django or plain unittest; review the result):
+
+```
+python .bob/onramp_normalize.py init-profile --write
+```
+
 Then open Bob in the new repository and run:
 
 ```
 /onramp
 ```
 
-`/onramp` needs `docs/onramp/profile.json`, which the kit does not create yet: copy this repository's profile as a template or ask Bob to create it first (see [known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md)).
+This exact sequence was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, verbose suite normalized, classified FULL with 0 regressions. `onramp_normalize.py` is a Claude-authored addition (20 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md).
 
 **Run the kit's own tests:**
 
 ```bash
-python .bob/test_gen_report.py
+python .bob/test_gen_report.py                          # IBM Bob's generator tests (65)
+cd .bob && python -m unittest test_onramp_normalize     # Claude's normalizer tests (20)
 ```
 
 **Run the Healthchecks suite (Windows):**
@@ -134,6 +141,6 @@ python .bob/gen_report.py capture-baseline
 
 ## How it was built
 
-IBM Bob (IDE and Bob Shell) performed the OnRamp implementation, repository exploration, debugging, testing workflows and code changes; its commits end with `Generated-by: IBM Bob`. Claude Code orchestrated Bob at the participant's direction, verified results independently, and assembled the public evidence presentation (pitch deck, Evidence Explorer, corrections). Claude's commits say so in their messages.
+IBM Bob (IDE and Bob Shell) implemented the original OnRamp kit (modes, skills, commands, hook, `gen_report.py`), the Healthchecks fix and feature, and the recorded engineering iterations; its commits end with `Generated-by: IBM Bob`. Claude Code orchestrated Bob at the participant's direction, independently verified its work, and — after Bob's 180-Bobcoin allowance was exhausted — authored a separately attributed normalization/bootstrap module (`.bob/onramp_normalize.py` and its tests) plus the public presentation artifacts (pitch deck, Evidence Explorer, corrections and corrected report). Commit messages and evidence records distinguish these contributions.
 
 Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/onramp/PLAN.md).
