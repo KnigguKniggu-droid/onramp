@@ -18,8 +18,22 @@ IBM Bob's plan allowance (180 Bobcoins) ran out on 2026-10-11 while Bob was fixi
 ## 2. Known limitation in Bob's corrected parser
 Bob's verbose-output parser does not handle tests whose docstring is printed between the test name and its result. Bob's own new test `test_webhooks_accept_http_205` has such a docstring. The parser then finds no outcomes and reports the run as INCONCLUSIVE. This fails safe: the run is not judged at all, rather than being judged wrongly. The browser classifier on the Evidence Explorer handles this case.
 
-## 3. Fresh installation needs a profile (open)
-The quick start copies only `.bob/`, but `/onramp`, the skills and the modes read `docs/onramp/profile.json`, and nothing in the kit creates it. In the TaskFlow portability runs, Bob created the profile when asked. Until the kit bootstraps it, create the profile first: copy the Healthchecks `docs/onramp/profile.json` as a template, or ask Bob to "create docs/onramp/profile.json for this repository" before running `/onramp`.
+## 3. Fresh installation needs a profile (workaround added by Claude)
+The quick start copies only `.bob/`, but `/onramp`, the skills and the modes read `docs/onramp/profile.json`. Bob's kit has no step that creates it. In the TaskFlow portability runs, Bob created the profile when asked.
+
+Claude Code added a separate, clearly attributed module, `.bob/onramp_normalize.py`, with 12 tests. Bob's files were not changed. In a fresh repository, run this once before `/onramp`:
+
+```
+python .bob/onramp_normalize.py init-profile --write
+```
+
+It detects Django (`manage.py` plus a settings module) or a plain unittest layout, writes a reviewable `docs/onramp/profile.json`, and does nothing if a profile already exists.
+
+The same module also provides:
+- **`normalize`:** turns a verbose test log into versioned JSON. It handles docstring lines and warnings printed mid-line, and fails closed when the "Ran N" count does not match.
+- **`classify`:** classifies two normalized runs. It keeps NEW FAILURE separate from REGRESSION and rejects unsupported schema versions.
+
+The Evidence Explorer's in-browser demo uses this same Python module as its authority. A CI parity check compares it with the browser code.
 
 ## 4. The post-edit hook reports PASS/FAIL only (open)
 `.bob/hooks/run-app-tests.mjs` runs the relevant tests and reports PASS or FAIL from the runner's summary. It does not call the baseline classifier, so a FAIL from the hook can be an inherited failure. Run `.bob/gen_report.py classify` for the baseline-aware verdict.
