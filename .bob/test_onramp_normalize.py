@@ -150,5 +150,27 @@ class EdgeCases(unittest.TestCase):
         self.assertEqual(on.normalize(t), on.normalize(t.replace("\n", "\r\n")))
 
 
+class UnknownStatusTests(unittest.TestCase):
+    def _runs(self, cur_status):
+        base = {"schema_version": "onramp.run/1", "problems": [], "outcomes": {"t.a": "FAIL", "t.b": "PASS"}}
+        cur = {"schema_version": "onramp.run/1", "problems": [], "outcomes": {"t.a": cur_status, "t.b": "PASS"}}
+        return on.classify(base, cur)
+
+    def test_null_outcome_is_inconclusive_not_fixed(self):
+        r = self._runs(None)
+        self.assertFalse(r["valid"])
+        self.assertEqual(r["fixed"], [])
+
+    def test_unknown_status_is_inconclusive_not_fixed(self):
+        r = self._runs("CRASH")
+        self.assertFalse(r["valid"])
+        self.assertIn("unknown status", r["problems"][0])
+
+    def test_missing_outcomes_is_inconclusive(self):
+        base = {"schema_version": "onramp.run/1", "problems": [], "outcomes": {"t.a": "PASS"}}
+        r = on.classify(base, {"schema_version": "onramp.run/1", "problems": []})
+        self.assertFalse(r["valid"])
+
+
 if __name__ == "__main__":
     unittest.main()
