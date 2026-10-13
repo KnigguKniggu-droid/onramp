@@ -84,10 +84,21 @@ def normalize(text: str, source: str = "") -> dict[str, Any]:
     }
 
 
+_STATUSES = ("PASS", "FAIL", "ERROR", "SKIP")
+
+
 def _check(run: dict[str, Any], label: str) -> list[str]:
     if run.get("schema_version") not in SUPPORTED:
         return [f"{label}: unsupported schema_version {run.get('schema_version')}"]
-    return [f"{label}: {p}" for p in run.get("problems", [])]
+    out = [f"{label}: {p}" for p in run.get("problems", [])]
+    outcomes = run.get("outcomes")
+    if not isinstance(outcomes, dict):
+        return out + [f"{label}: outcomes missing"]
+    # fail closed: anything outside the normalizer's vocabulary (null, typos, CRASH...) is not trusted
+    bad = sorted(t for t, v in outcomes.items() if v not in _STATUSES)
+    if bad:
+        out.append(f"{label}: {len(bad)} test(s) with an unknown status (first: {bad[0]})")
+    return out
 
 
 def classify(baseline: dict[str, Any], current: dict[str, Any]) -> dict[str, Any]:
