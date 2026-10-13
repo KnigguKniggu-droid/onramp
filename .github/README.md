@@ -23,7 +23,7 @@ The reusable kit lives under `.bob/` (plus a per-repository profile in `docs/onr
 | **`write-evidence-report` skill** | [`.bob/skills/write-evidence-report/SKILL.md`](../.bob/skills/write-evidence-report/SKILL.md) | Assemble `REPORT_<slug>.md` from the three artefact files |
 | **`/onramp` command** | [`.bob/commands/onramp.md`](../.bob/commands/onramp.md) | Guided walkthrough a newcomer runs once; reads `CODEBASE_MAP.md` and summarises the repo |
 | **`/evidence` command** | [`.bob/commands/evidence.md`](../.bob/commands/evidence.md) | Assemble or regenerate the evidence report for a given slug |
-| **Post-edit test hook** | [`.bob/settings.json`](../.bob/settings.json) + [`.bob/hooks/run-app-tests.mjs`](../.bob/hooks/run-app-tests.mjs) | After any `write_file`/`apply_diff`/`search_and_replace`/`insert_content` on a `.py` file, automatically runs the relevant app-level test suite |
+| **Post-edit test hook** | [`.bob/settings.json`](../.bob/settings.json) + [`.bob/hooks/run-app-tests.mjs`](../.bob/hooks/run-app-tests.mjs) | After any `write_file`/`apply_diff`/`search_and_replace`/`insert_content` on a `.py` file, automatically runs the relevant app-level test suite and prints PASS/FAIL. **Runner feedback only:** it always exits 0, never blocks the edit and does not compare against the baseline; baseline-aware verdicts come from `gen_report.py classify` / `onramp_normalize.py classify` |
 | **`gen_report.py`** | [`.bob/gen_report.py`](../.bob/gen_report.py) | Stdlib-only script: `capture-baseline`, `classify` (inherited failures / regressions / fixed / unchanged), `seal-benchmark` (blind envelope before work starts), `attach-patch`, `report` |
 | **Evidence artefacts** | [`docs/onramp/evidence/`](../docs/onramp/evidence/) | `baseline.json`, sealed benchmark, pre/post fix outputs, diff, upstream patch, `REPORT_<slug>.md` |
 | **Repo profile** | [`docs/onramp/profile.json`](../docs/onramp/profile.json) | The only file that changes between repos — test runner, app root, settings module |
@@ -34,7 +34,7 @@ The reusable kit lives under `.bob/` (plus a per-repository profile in `docs/onr
 
 ### Baseline
 
-Running `.venv\Scripts\python.exe manage.py test` on Windows at commit `e10db36` gave **1 761 tests, 29 failures**.  All 29 are Windows-only:
+Running `.venv\Scripts\python.exe manage.py test` on Windows at kit commit `e10db36` (its application code under `hc/`, `templates/` and `static/` is identical to upstream `0968fa2`) gave **1 761 tests, 29 failures**.  All 29 are Windows-only:
 
 - **26** are `hc.integrations.signal` tests — they fail with `AttributeError: module 'socket' has no attribute 'AF_UNIX'`, which does not exist on Windows.
 - **2** are `hc.accounts.tests.test_senddeletionscheduled` tests — they fail with `ValueError: Invalid format string` because the strftime format used is Linux-only.
