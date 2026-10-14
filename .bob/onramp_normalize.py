@@ -26,7 +26,9 @@ from typing import Any
 SCHEMA_VERSION = "onramp.run/1"
 SUPPORTED = {SCHEMA_VERSION}
 
-_HEADER = re.compile(r"^(\w+) \(([\w.]+)\)", re.M)
+# A test header normally starts its own line, but on a fresh Django checkout a migration progress line
+# ("Applying x...") can run straight into it with no newline, so a header may also follow "...".
+_HEADER = re.compile(r"(?:^|(?<=\.\.\.))(\w+) \(([\w.]+)\)", re.M)
 _HEADER_CONT = re.compile(r"[^\r\n]*\)(?: \.\.\.|\r?\n[^\r\n]* \.\.\.)")
 _STATUS = re.compile(r"(?:\.\.\. |^)(ok|FAIL|ERROR|skipped[^\r\n]*|expected failure|unexpected success)\s*$", re.M)
 _RAN = re.compile(r"^Ran (\d+) tests? in [\d.]+s\s*$", re.M)

@@ -150,6 +150,22 @@ class EdgeCases(unittest.TestCase):
         self.assertEqual(on.normalize(t), on.normalize(t.replace("\n", "\r\n")))
 
 
+class FreshCheckoutInterleavingTests(unittest.TestCase):
+    def test_header_glued_to_migration_line_with_warning_before_status(self):
+        # Observed on an untouched Healthchecks clone (2026-10-13): stdout/stderr interleave, and a
+        # UserWarning (no static dir yet) separates the test header from its "ok".
+        log = ("  Applying sessions.0001_initial...test_it_rejects_get (hc.accounts.tests.T.test_it_rejects_get) ... "
+               "C:\\x\\base.py:63: UserWarning: No directory at: C:\\x\\static\\\n"
+               "  mw_instance = middleware(adapted_handler)\n"
+               "ok\n"
+               "test_it_works (hc.accounts.tests.T.test_it_works) ... ok\n"
+               "\n" + "-" * 70 + "\n"
+               "Ran 2 tests in 0.1s\n\nOK\n")
+        r = on.normalize(log)
+        self.assertTrue(r["valid"], r["problems"])
+        self.assertEqual(r["outcomes"], {"hc.accounts.tests.T.test_it_rejects_get": "PASS", "hc.accounts.tests.T.test_it_works": "PASS"})
+
+
 class UnknownStatusTests(unittest.TestCase):
     def _runs(self, cur_status):
         base = {"schema_version": "onramp.run/1", "problems": [], "outcomes": {"t.a": "FAIL", "t.b": "PASS"}}

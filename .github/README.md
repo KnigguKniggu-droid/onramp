@@ -115,13 +115,13 @@ Then open Bob in the new repository and run:
 /onramp
 ```
 
-This exact sequence was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, verbose suite normalized, classified FULL with 0 regressions. `onramp_normalize.py` is a Claude-authored addition (23 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md).
+This exact sequence was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, verbose suite normalized, classified FULL with 0 regressions. `onramp_normalize.py` is a Claude-authored addition (24 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md).
 
 **Run the kit's own tests:**
 
 ```bash
 python .bob/test_gen_report.py                          # IBM Bob's generator tests (65)
-cd .bob && python -m unittest test_onramp_normalize     # Claude's normalizer tests (23)
+cd .bob && python -m unittest test_onramp_normalize     # Claude's normalizer tests (24)
 ```
 
 **Run the Healthchecks suite (Windows):**
