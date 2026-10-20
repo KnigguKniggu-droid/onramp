@@ -5,170 +5,317 @@
 <title>OnRamp pitch deck</title>
 <style>
   @page { size: 13.333in 7.5in; margin: 0; }
-  :root { --blue: #0f62fe; --ink: #161616; --muted: #525252; --line: #e0e0e0; --soft: #f2f4f8; }
+  :root { --blue: #0f62fe; --blue-dk: #002d9c; --blue-lt: #edf5ff; --purple: #6929c4; --red: #da1e28; --red-lt: #fff1f1;
+    --green: #198038; --green-lt: #defbe6; --ink: #161616; --muted: #525252; --line: #e0e0e0; --soft: #f2f4f8; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #fff; color: var(--ink);
     font-family: "Segoe UI", "IBM Plex Sans", Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .slide { width: 13.333in; height: 7.5in; padding: 0.55in 0.7in; position: relative; page-break-after: always; overflow: hidden; }
+  .slide { width: 13.333in; height: 7.5in; padding: 0.5in 0.7in 0.8in; position: relative; page-break-after: always; overflow: hidden; }
   .slide:last-child { page-break-after: auto; }
-  .kicker { color: var(--blue); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13pt; }
-  h1 { font-size: 46pt; margin: 0.15in 0 0.1in; line-height: 1.05; }
-  h2 { font-size: 30pt; margin: 0.08in 0 0.25in; line-height: 1.12; }
-  p, li { font-size: 15.5pt; line-height: 1.38; }
-  ul { margin: 0; padding-left: 1.1em; }
-  li { margin-bottom: 0.08in; }
+  .kicker { color: var(--blue); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12.5pt; }
+  h1 { font-size: 64pt; margin: 0.1in 0 0.05in; line-height: 1; letter-spacing: -0.01em; }
+  h2 { font-size: 29pt; margin: 0.06in 0 0.26in; line-height: 1.12; letter-spacing: -0.005em; }
+  p, li { font-size: 15pt; line-height: 1.36; }
+  p { margin: 0 0 0.1in; }
+  ul { margin: 0; padding-left: 1.05em; }
+  li { margin-bottom: 0.09in; }
+  b { font-weight: 650; }
   .muted { color: var(--muted); }
   .small { font-size: 12pt; }
-  .foot { position: absolute; left: 0.7in; right: 0.7in; bottom: 0.32in; display: flex; justify-content: space-between;
+  .foot { position: absolute; left: 0.7in; right: 0.7in; bottom: 0.3in; display: flex; justify-content: space-between;
     color: var(--muted); font-size: 10.5pt; border-top: 1px solid var(--line); padding-top: 0.08in; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45in; }
-  .cols-60 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.4in; align-items: start; }
-  .card { background: var(--soft); border-radius: 10px; padding: 0.2in 0.25in; }
+  .big-li > div > ul li { font-size: 17.5pt; margin-bottom: 0.16in; }
+  .foot .brand { color: var(--blue); font-weight: 600; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4in; }
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.25in; }
+  .card { background: var(--soft); border-radius: 10px; padding: 0.2in 0.24in; }
   .card h3 { margin: 0 0 0.08in; font-size: 15pt; color: var(--blue); }
-  .card p, .card li { font-size: 13pt; }
-  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.16in; margin-top: 0.1in; }
-  .step { background: var(--soft); border-top: 5px solid var(--blue); border-radius: 8px; padding: 0.14in 0.16in; min-height: 2.7in; }
-  .step b { display: block; font-size: 14.5pt; margin-bottom: 0.06in; }
-  .step span { font-size: 11.8pt; line-height: 1.35; display: block; color: #262626; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.18in; }
-  .stat { background: var(--soft); border-radius: 10px; padding: 0.16in 0.2in; }
-  .stat .n { font-size: 34pt; font-weight: 700; color: var(--blue); line-height: 1; }
-  .stat .l { font-size: 11.5pt; color: var(--muted); margin-top: 0.06in; }
-  img.shot { width: 100%; border: 1px solid var(--line); border-radius: 8px; }
-  .note { border-left: 4px solid var(--blue); padding: 0.08in 0.16in; background: #edf5ff; font-size: 12.5pt; margin-top: 0.18in; }
+  .card p, .card li { font-size: 13pt; line-height: 1.38; }
+  .card li { margin-bottom: 0.05in; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.2in; }
+  .stat { background: var(--soft); border-radius: 10px; padding: 0.18in 0.2in; border-top: 5px solid var(--blue); }
+  .stat .n { font-size: 40pt; font-weight: 700; color: var(--blue); line-height: 1; letter-spacing: -0.01em; }
+  .stat .l { font-size: 12pt; color: #393939; margin-top: 0.08in; line-height: 1.3; }
+  .stat.red { border-top-color: var(--red); } .stat.red .n { color: var(--red); }
+  .stat.green { border-top-color: var(--green); } .stat.green .n { color: var(--green); }
+  .note { border-left: 4px solid var(--blue); padding: 0.09in 0.16in; background: var(--blue-lt); font-size: 12.5pt; line-height: 1.38; }
   .title-band { position: absolute; left: 0; top: 0; bottom: 0; width: 0.28in; background: var(--blue); }
-  code { font-family: Consolas, "IBM Plex Mono", monospace; font-size: 0.92em; background: #eef0f3; padding: 0 0.05em; border-radius: 3px; }
+  code { font-family: Consolas, "IBM Plex Mono", monospace; font-size: 0.9em; background: #e8ebf0; padding: 0 0.06em; border-radius: 3px; }
+  .path { font-family: Consolas, "IBM Plex Mono", monospace; font-size: 11.5pt; color: var(--blue-dk); }
+
+  /* flow / timeline */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.16in; }
+  .step { background: var(--soft); border-top: 5px solid var(--blue); border-radius: 8px; padding: 0.14in 0.16in; position: relative; }
+  .step .num { font-size: 11pt; font-weight: 700; color: var(--blue); letter-spacing: 0.06em; text-transform: uppercase; }
+  .step b { display: block; font-size: 15pt; margin: 0.03in 0 0.06in; }
+  .step span { font-size: 12pt; line-height: 1.36; display: block; color: #262626; }
+  .step.red { border-top-color: var(--red); background: var(--red-lt); } .step.red .num { color: var(--red); }
+  .step.green { border-top-color: var(--green); background: var(--green-lt); } .step.green .num { color: var(--green); }
+  .step:not(:last-child)::after { content: "\203A"; position: absolute; right: -0.15in; top: 38%; font-size: 22pt; color: #8d8d8d; }
+
+  /* title slide */
+  .tagline { font-size: 25pt; font-weight: 600; line-height: 1.2; max-width: 12in; margin: 0.12in 0 0.1in; color: var(--blue-dk); }
+  .sub { font-size: 16pt; color: #393939; max-width: 11in; }
+
+  /* problem */
+  .hero-n { font-size: 96pt; font-weight: 700; color: var(--red); line-height: 0.95; letter-spacing: -0.02em; }
+  .hero-n small { font-size: 40pt; color: var(--muted); font-weight: 600; }
+
+  /* quote */
+  .quote { background: var(--ink); color: #fff; border-radius: 10px; padding: 0.2in 0.28in; }
+  .quote .q { font-size: 19pt; font-weight: 600; line-height: 1.25; }
+  .quote .who { font-size: 11.5pt; color: #c6c6c6; margin-top: 0.08in; }
+
+  /* demo */
+  .url { display: inline-block; font-family: Consolas, "IBM Plex Mono", monospace; font-size: 21pt; color: #fff; background: var(--blue);
+    padding: 0.12in 0.24in; border-radius: 8px; margin: 0.04in 0 0.26in; }
+  .verdict { font-family: Consolas, "IBM Plex Mono", monospace; background: #161616; color: #f4f4f4; border-radius: 10px; padding: 0.2in 0.26in; font-size: 13pt; line-height: 1.6; }
+  .verdict .ok { color: #42be65; font-weight: 700; } .verdict .dim { color: #a8a8a8; }
+  .chip { display: inline-block; font-size: 11pt; font-weight: 600; padding: 0.02in 0.12in; border-radius: 20px; margin-right: 0.06in; }
+  .chip.inh { background: #e0e0e0; color: #393939; } .chip.reg { background: var(--red-lt); color: var(--red); }
+  .chip.fix { background: var(--green-lt); color: var(--green); } .chip.new { background: var(--blue-lt); color: var(--blue); }
+
+  /* roadmap */
+  .road { display: grid; grid-template-columns: 0.55in 1fr; gap: 0.22in 0.16in; align-items: start; }
+  .road .k { width: 0.48in; height: 0.48in; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: 15pt;
+    display: flex; align-items: center; justify-content: center; }
+  .road p { font-size: 14pt; margin: 0; }
+  .road p .muted { font-size: 12.5pt; }
+
+  /* links */
+  .linkrow { display: grid; grid-template-columns: 2.3in 1fr; gap: 0.12in 0.3in; align-items: baseline; }
+  .linkrow .lab { font-size: 14pt; font-weight: 600; color: #393939; }
+  .linkrow .val { font-family: Consolas, "IBM Plex Mono", monospace; font-size: 14.5pt; color: var(--blue-dk); }
 </style>
 </head>
 <body>
 
+<!-- 1. Title -->
 <section class="slide">
   <div class="title-band"></div>
-  <div class="kicker" style="margin-top:0.9in">Building with IBM Bob · Theme 1: Explore, Fix, and Build</div>
+  <div class="kicker" style="margin-top:0.35in">IBM Bob hackathon · Theme 1: Explore, Fix, and Build</div>
   <h1>OnRamp</h1>
-  <p style="font-size:24pt; max-width:10.8in; margin-top:0.05in">An IBM Bob kit that takes a developer from "never seen this repo" to a verified fix and feature, with evidence behind every claim.</p>
-  <div style="margin-top:0.55in" class="cols">
-    <div class="card"><h3>Team</h3><p>Solo participant<br><span class="muted">Code: github.com/KnigguKniggu-droid/onramp<br>Evidence: kniggukniggu-droid.github.io/onramp-evidence</span></p></div>
-    <div class="card"><h3>Built with</h3><p>IBM Bob IDE 2.2.1 (Plan, Agent, 3 custom modes, skills, commands, hook) and Bob Shell 2.0.5 · Python · Django · Flask · Node.js · GitHub Actions</p></div>
+  <div class="tagline">OnRamp makes IBM Bob prove its code changes, not just make them.</div>
+  <div class="sub">A drop-in <code>.bob/</code> kit for joining an unfamiliar codebase: record the baseline first, write a failing test before the fix, verify against the baseline, and ship evidence a reviewer can check.</div>
+  <div class="stats" style="margin-top:0.4in">
+    <div class="stat red"><div class="n">22 &rarr; 0</div><div class="l">errors from Bob's first fix, caught by Bob in Verifier mode and fixed</div></div>
+    <div class="stat green"><div class="n">1,767</div><div class="l">tests after the fix and feature, 0 regressions (independent run by the team)</div></div>
+    <div class="stat"><div class="n">491</div><div class="l">Bob tool calls over 10 recorded tasks</div></div>
+    <div class="stat"><div class="n">86.5%</div><div class="l">of the <code>.bob/</code> kit lines come from Bob commits (git blame)</div></div>
   </div>
-  <div class="foot"><span>Team and project introduction</span><span>1</span></div>
+  <p class="small muted" style="margin-top:0.3in">Solo participant · Built with IBM Bob IDE 2.2.1 and Bob Shell 2.0.5<br>Code: github.com/KnigguKniggu-droid/onramp · Live demo: kniggukniggu-droid.github.io/onramp-evidence</p>
+  <div class="foot"><span>Team and project introduction</span><span><span class="brand">OnRamp</span> · 1</span></div>
 </section>
 
+<!-- 2. Problem -->
 <section class="slide">
   <div class="kicker">The developer problem</div>
-  <h2>In a real codebase, red tests don't tell you whether you broke something.</h2>
-  <div class="cols-60">
+  <h2>The suite is red. Did you break it, or was it already broken?</h2>
+  <div class="cols big-li" style="grid-template-columns: 1fr 1.15fr; align-items:start">
+    <div class="card" style="background:var(--red-lt)">
+      <div class="hero-n">29<small> / 1,761</small></div>
+      <p style="font-size:16pt; margin-top:0.12in"><b>Healthchecks tests fail on Windows before anyone changes a line.</b></p>
+      <p class="small" style="color:#393939">Healthchecks is an open-source Django app. 26 tests need <code>socket.AF_UNIX</code>, 2 use a Linux-only date format and 1 needs time-zone switching. The team's Linux run passes all of them.</p>
+    </div>
     <div>
       <ul>
         <li>Newcomers inherit large repositories, local quirks and test suites that already fail on their machine.</li>
-        <li>Healthchecks (an open-source Django app): <b>29 of 1,761 tests fail on Windows</b> before anyone changes a line.</li>
-        <li>AI assistants make plausible changes fast, but "it passes" is not evidence when the baseline is red.</li>
+        <li>AI agents make plausible changes fast. "It passes" is not evidence when the baseline is already red.</li>
+        <li>Without a baseline, a reviewer must trust the agent or redo the work.</li>
       </ul>
-      <p style="margin-top:0.25in"><b>Question:</b> can IBM Bob onboard onto unfamiliar code, fix a real bug and add a real feature, so that every claim can be checked?</p>
-    </div>
-    <div class="card">
-      <h3>Why it matters</h3>
-      <p>Brownfield onboarding is where developers lose the most time, and where trust in an AI partner is earned or lost. OnRamp makes Bob's work reproducible: baseline first, failing test before fix, and a report a reviewer can verify.</p>
+      <div class="note" style="margin-top:0.25in; font-size:14pt"><b>Our question:</b> can IBM Bob onboard onto unfamiliar code, fix a real bug and add a real feature, so that every claim can be checked?</div>
     </div>
   </div>
-  <div class="foot"><span>Project introduction</span><span>2</span></div>
+  <div class="foot"><span>Problem</span><span><span class="brand">OnRamp</span> · 2</span></div>
 </section>
 
+<!-- 3. What OnRamp is -->
 <section class="slide">
   <div class="kicker">What we built</div>
   <h2>OnRamp: one folder you drop into a repository</h2>
-  <div class="flow">
-    <div class="step"><b>/onramp</b><span>Validates the install, writes a repo profile, captures a baseline, maps the codebase.</span></div>
-    <div class="step"><b>Explorer mode</b><span>Read-only guide with file references; cannot edit or run anything.</span></div>
-    <div class="step"><b>Reproducer mode</b><span>Failing test first; the fix comes only after the pre-fix artifact exists.</span></div>
-    <div class="step"><b>Verifier mode</b><span>Re-runs tests and classifies every failure: inherited, regression, fixed, unchanged.</span></div>
-    <div class="step"><b>Evidence</b><span>Stdlib generator: sealed blind benchmarks, attached reference patches, REPORT_&lt;slug&gt;.md.</span></div>
+  <div class="flow" style="margin-top:0.1in">
+    <div class="step"><div class="num">Step 1</div><b>/onramp</b><span>Validates the install, writes a repo profile, captures the baseline and maps the codebase.</span></div>
+    <div class="step"><div class="num">Step 2</div><b>Explorer mode</b><span>Read-only guide with file references. It answers "where does X live?" before any change.</span></div>
+    <div class="step"><div class="num">Step 3</div><b>Reproducer mode</b><span>Failing test first. The fix comes only after the pre-fix artefact shows <code>FAIL</code>.</span></div>
+    <div class="step"><div class="num">Step 4</div><b>Verifier mode</b><span>Re-runs the tests and classifies each failure against the baseline: inherited, regression or fixed.</span></div>
+    <div class="step green"><div class="num">Step 5</div><b>Evidence report</b><span>Pre-fix failure, post-fix pass, diff and <code>REPORT_&lt;slug&gt;.md</code> for the reviewer.</span></div>
   </div>
-  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (65 tests). After Bob's allowance ran out, the team added a separately labelled normalizer/bootstrap module (<code>onramp_normalize.py</code>, 24 tests).</div>
-  <div class="foot"><span>Project summary</span><span>3</span></div>
-</section>
-
-<section class="slide">
-  <div class="kicker">Result 1 · Explore</div>
-  <h2>29 failures, zero regressions</h2>
+  <p class="small muted" style="margin:0.12in 0 0.28in">Regression found in step 4 &rarr; back to the fix. No new failures &rarr; evidence report.</p>
   <div class="stats">
-    <div class="stat"><div class="n">1,761</div><div class="l">tests in the Healthchecks baseline</div></div>
-    <div class="stat"><div class="n">29</div><div class="l">inherited failures, recorded before any change</div></div>
-    <div class="stat"><div class="n">1,767</div><div class="l">tests after Bob's fix and feature</div></div>
-    <div class="stat"><div class="n">0</div><div class="l">regressions, same 29 failing test IDs</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">custom modes in <code>.bob/custom_modes.yaml</code></div></div>
+    <div class="stat"><div class="n">4</div><div class="l">skills: map-codebase, bug-to-test, verify-change, write-evidence-report</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">commands, including <code>/onramp</code></div></div>
+    <div class="stat"><div class="n">1</div><div class="l">PostToolUse hook in <code>.bob/settings.json</code></div></div>
   </div>
-  <ul style="margin-top:0.35in">
-    <li>26 Signal tests need <code>socket.AF_UNIX</code>, 2 use a Linux-only date format, 1 DST test needs time-zone switching. All are Windows-only, and all are classified as inherited.</li>
-    <li>Bob generated <code>CODEBASE_MAP.md</code> with its map-codebase skill, and the team checked the baseline against an independent run (identical IDs).</li>
-  </ul>
-  <div class="foot"><span>Project summary</span><span>4</span></div>
+  <p class="small muted" style="margin-top:0.18in">Only Bob-native extension points. A team-written normalizer (<code>onramp_normalize.py</code>, 24 tests) is labelled separately.</p>
+  <div class="foot"><span>Project summary</span><span><span class="brand">OnRamp</span> · 3</span></div>
 </section>
 
+<!-- 4. Proof: blind fix -->
 <section class="slide">
-  <div class="kicker">Result 2 · Fix (blind)</div>
-  <h2>Bob vs the maintainer</h2>
-  <div class="cols-60">
-    <div>
-      <ul>
-        <li>Healthchecks pinned at upstream <code>0968fa2</code> (the benchmark itself was sealed at kit commit <code>a3acbc3</code>), the commit before the maintainer fixed a real bug: webhooks answering HTTP 205 were retried 3 times and marked failed.</li>
-        <li>Bob got only the symptoms. The brief was SHA-256 sealed before the issue-specific work began (Bob had already mapped the codebase).</li>
-        <li>Reproducer: the failing test (<code>3 != 1</code> requests) came first, then a 1-line fix. Bob's first attempt broke 22 webhook tests; Verifier caught it and Bob revised the fix. Independent full-suite run: 0 regressions.</li>
-        <li>Only after Bob committed did we reveal upstream <code>0a9bff9</code>.</li>
-      </ul>
+  <div class="kicker">Proof · Blind fix of a real upstream bug</div>
+  <h2>Bob broke 22 tests, caught it in Verifier mode, and fixed it</h2>
+  <div class="flow">
+    <div class="step"><div class="num">1 · Sealed</div><b>Symptoms only</b><span>Healthchecks at upstream <code>0968fa2</code>. Webhooks that answer HTTP 205 are retried 3 times and marked failed. The brief was SHA-256 sealed.</span></div>
+    <div class="step"><div class="num">2 · Reproducer</div><b>Failing test first</b><span><code>AssertionError: 3 != 1</code> requests, before any fix.</span></div>
+    <div class="step red"><div class="num">3 · First fix</div><b>22 errors</b><span><code>200 &lt;= status &lt; 300</code> broke 22 tests in the 48-test webhook suite.</span></div>
+    <div class="step green"><div class="num">4 · Verifier</div><b>Caught and revised</b><span>Bob compared before and after, then changed the check to <code>range(200, 300)</code>. Webhook suite: 48 tests, OK.</span></div>
+    <div class="step green"><div class="num">5 · Independent</div><b>0 regressions</b><span>The team's full run: 1,767 tests, same 29 inherited failures. A Linux re-run reproduced both results.</span></div>
+  </div>
+  <div class="cols" style="margin-top:0.26in; grid-template-columns: 1fr 1.05fr; gap:0.3in">
+    <div class="quote">
+      <div class="q">"Before fix: 47 tests, OK. After fix: 48 tests (1 new), but 22 ERRORs. These 22 errors are regressions introduced by my fix!"</div>
+      <div class="who">IBM Bob, Verifier mode, step 40 · <span style="font-family:Consolas,monospace">docs/evidence/BOB_SESSION_webhook-205.md</span></div>
     </div>
     <div class="card">
-      <h3>Honest comparison (written by Bob; paths later anonymised by the team)</h3>
-      <p>Same defect, same line, different policy. Our brief said "a 2xx response such as 205" should succeed; Bob accepts every 2xx response; the maintainer added only 205. Bob's own report concludes the narrower upstream fix is safer, because <code>HttpTransport</code> is shared by about 25 integrations.</p>
+      <h3>Then we revealed the maintainer's fix (<code>0a9bff9</code>)</h3>
+      <p>Same defect, same line, different policy. Bob accepts every 2xx response; the maintainer added only 205. Bob's own report concludes the narrower upstream fix is safer, because <code>HttpTransport</code> is shared by about 25 integrations.</p>
     </div>
   </div>
-  <div class="foot"><span>Project summary</span><span>5</span></div>
+  <div class="foot"><span>Proof · <span class="path" style="font-size:10pt">docs/evidence/LINUX_REPRODUCTION_2026-10-19.md</span></span><span><span class="brand">OnRamp</span> · 4</span></div>
 </section>
 
+<!-- 5. How Bob was used -->
 <section class="slide">
-  <div class="kicker">Result 3 · Build and reuse</div>
-  <h2>A real feature, and a kit that is not hardcoded</h2>
-  <div class="cols">
-    <div class="card"><h3>Feature #1090 (a user request)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "café"; Bob added a test and fixed it.</p></div>
-    <div class="card"><h3>Portability on a Flask app (TaskFlow)</h3><p>The kit was copied unchanged three times. Run 1 exposed Django assumptions (hardcoded paths, output parsing, file names). Bob made the kit profile-driven. Run 2 then found one parser gap, and after Bob's fix run 3 classified the failure correctly.</p></div>
+  <div class="kicker">How IBM Bob was used</div>
+  <h2>Bob built the kit, and the kit made Bob prove its work</h2>
+  <div class="stats">
+    <div class="stat"><div class="n">491</div><div class="l">tool calls over 10 recorded tasks, exported from Bob's task database</div></div>
+    <div class="stat"><div class="n">23</div><div class="l">commits with the <code>Generated-by: IBM Bob</code> trailer</div></div>
+    <div class="stat"><div class="n">86.5%</div><div class="l">2,452 of 2,834 <code>.bob/</code> lines from Bob commits (git blame)</div></div>
+    <div class="stat"><div class="n" style="font-size:34pt; padding-top:0.06in">3 · 4 · 2 · 1</div><div class="l">modes · skills · commands · hook, all Bob-native</div></div>
   </div>
-  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a workspace guard blocked the team from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, team-labelled files.</div>
-  <div class="foot"><span>Project summary</span><span>6</span></div>
+  <div class="cols" style="margin-top:0.28in; grid-template-columns: 1.35fr 1fr; gap:0.35in">
+    <ul>
+      <li><b>Plan mode</b> designed the kit before building.</li>
+      <li><b>Agent mode</b> built the modes, skills, commands, hook and report generator, and wrote the bug fix and the feature.</li>
+      <li><b>Custom modes + <code>switch_mode</code></b>: Reproducer and Verifier drove the blind fix.</li>
+      <li><b>Skills</b>: map-codebase wrote <code>CODEBASE_MAP.md</code> for Healthchecks.</li>
+      <li><b>Bob Shell (ACP)</b> ran the portability tests in a second repository.</li>
+    </ul>
+    <div class="card">
+      <h3>Division of work</h3>
+      <p>The team directed Bob, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back to Bob.</p>
+      <p class="path" style="margin:0.12in 0 0">docs/evidence/BOB_ACTIVITY_TOTALS.md</p>
+    </div>
+  </div>
+  <div class="foot"><span>Tool usage</span><span><span class="brand">OnRamp</span> · 5</span></div>
 </section>
 
+<!-- 6. Portability + feature -->
 <section class="slide">
-  <div class="kicker">How Bob was used</div>
-  <h2>IBM Bob as the engineering partner, end to end</h2>
-  <div class="cols">
+  <div class="kicker">Portability and build</div>
+  <h2>Not hardcoded: same kit on a second app, plus a real feature</h2>
+  <div class="cols" style="grid-template-columns: 1.3fr 1fr; gap:0.35in">
+    <div>
+      <p style="font-size:15pt; margin-bottom:0.14in"><b>TaskFlow (Flask): the kit was copied in unchanged, three times.</b></p>
+      <div class="flow" style="grid-template-columns: repeat(3, 1fr)">
+        <div class="step red"><div class="num">Run 1</div><b>Django assumptions</b><span>Hardcoded paths, output parsing and file names. Bob made the kit profile-driven.</span></div>
+        <div class="step red"><div class="num">Run 2</div><b>One parser gap</b><span><code>unittest</code> error types recorded as "Unknown" without <code>-v</code>. Bob fixed it in <code>8165552</code>.</span></div>
+        <div class="step green"><div class="num">Run 3</div><b>Correct</b><span>Kit at <code>8165552</code>, copied unchanged. <code>AssertionError</code> classified correctly.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Feature #1090 (a user request)</h3>
+      <p>JSON webhook bodies are pretty-printed in the ping details view. Non-JSON and email bodies are untouched, and Download Original still serves the exact bytes.</p>
+      <p>An independent check found <code>json.dumps</code> escaping "café". Bob added a test and fixed it.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.3in">While Bob had budget, every gap went back to Bob as an observed failure; later fixes are separate, team-labelled files. The 6 new tests in the 1,767-test run are Bob's webhook test and its 5 feature tests.</div>
+  <div class="foot"><span>Portability</span><span><span class="brand">OnRamp</span> · 6</span></div>
+</section>
+
+<!-- 7. Live demo -->
+<section class="slide">
+  <div class="kicker">Live demo · try it yourself</div>
+  <h2>Paste your own test log. Get a baseline-aware verdict.</h2>
+  <div class="url">kniggukniggu-droid.github.io/onramp-evidence</div>
+  <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap:0.4in">
     <div>
       <ul>
-        <li><b>Plan mode</b> designed the kit before building.</li>
-        <li><b>491 logged tool calls across 10 recorded tasks</b>, exported from Bob's own task database (docs/evidence/BOB_ACTIVITY_TOTALS.md); the blind fix's full step log is docs/evidence/BOB_SESSION_webhook-205.md.</li>
-        <li><b>Agent mode</b> built the modes, skills, commands, hook and generator, each in its own commit.</li>
-        <li><b>Custom modes</b> (Reproducer, Verifier) drove the blind fix.</li>
-        <li><b>Bob Shell (ACP)</b> ran the portability tests in other repositories.</li>
+        <li><b>Open</b> the Evidence Explorer. It runs in the browser; nothing to install.</li>
+        <li><b>Drop in</b> a test log, or use the published Healthchecks runs.</li>
+        <li><b>Read</b> the verdict: every failure is classified against the baseline.</li>
+        <li><b>Check</b> the evidence files behind every claim in this deck.</li>
       </ul>
+      <p style="margin-top:0.14in"><span class="chip inh">inherited</span><span class="chip reg">regression</span><span class="chip fix">fixed</span><span class="chip new">new passing</span></p>
     </div>
-    <div class="card"><h3>Process, honestly</h3><p>The team directed Bob, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back. Every one of Bob's commits ends with <code>Generated-by: IBM Bob</code>.</p></div>
+    <div>
+      <div class="verdict">
+        <span class="dim">Verdict · SUITE_FULL_after_fix_independent.txt</span><br>
+        Ran 1767 tests<br>
+        <span class="ok">FULL</span>: 29 inherited · 0 fixed · <span class="ok">0 regressions</span><br>
+        0 new failures · 6 new passing tests<br>
+        <span class="dim">1,732 unchanged passes</span>
+      </div>
+      <p class="small muted" style="margin-top:0.12in">The team's independent run after Bob's fix and feature. The browser classifier is team-written; CI checks that it agrees with <code>onramp_normalize.py</code>.</p>
+    </div>
   </div>
-  <div class="foot"><span>Tool usage</span><span>7</span></div>
+  <div class="foot"><span>Live demo</span><span><span class="brand">OnRamp</span> · 7</span></div>
 </section>
 
+<!-- 8. Impact -->
+<section class="slide">
+  <div class="kicker">Impact for teams and enterprises</div>
+  <h2>Reviewers check evidence instead of trusting the agent</h2>
+  <div class="cols3">
+    <div class="card"><h3>Faster onboarding</h3><p>A newcomer runs <code>/onramp</code>. Explorer mode and the map-codebase skill map the repository read-only before anyone changes it.</p></div>
+    <div class="card"><h3>Reviewable AI changes</h3><p>Every change ships with a pre-fix failure, a post-fix pass, a diff and a report. A reviewer can re-run each claim.</p></div>
+    <div class="card"><h3>Less test noise</h3><p>The baseline separates failures that were already there from regressions the change introduced. 29 inherited failures stop blocking work.</p></div>
+  </div>
+  <div class="cols3" style="margin-top:0.25in">
+    <div class="card"><h3>Drop-in adoption</h3><p>One <code>.bob/</code> folder and a per-repository profile. No new service to run.</p></div>
+    <div class="card"><h3>Agent benchmarking</h3><p>Sealed blind briefs compare an AI fix with the maintainer's real fix, on the same bug.</p></div>
+    <div class="card"><h3>Audit trail</h3><p>Every Bob commit carries <code>Generated-by: IBM Bob</code>. Bob's task log is exported as evidence.</p></div>
+  </div>
+  <div class="foot"><span>Impact</span><span><span class="brand">OnRamp</span> · 8</span></div>
+</section>
+
+<!-- 9. Roadmap and learnings -->
 <section class="slide">
   <div class="kicker">Roadmap and learnings</div>
-  <h2>What we learned, and what comes next</h2>
-  <div class="cols">
-    <div class="card"><h3>Learnings</h3><ul>
-      <li>A baseline is the difference between "tests are red" and "I broke something".</li>
-      <li>Sealing the brief makes an AI fix comparable with a human one.</li>
-      <li>Bob's first plan guessed config locations; testing the kit on a second repository exposed what a single repo hides.</li>
-      <li>Budget discipline: small, fresh Bob tasks cost a fraction of long ones.</li></ul></div>
-    <div class="card"><h3>Roadmap</h3><ul>
-      <li>Profiles for pytest, Node and Java projects.</li>
-      <li>Record allowed and withheld information in every sealed benchmark.</li>
-      <li>A CI job that runs <code>gen_report.py classify</code> on every pull request.</li>
-      <li>More blind benchmarks from real upstream fixes, to score agents over time.</li></ul></div>
+  <h2>Next: turn the rules into gates</h2>
+  <div class="cols" style="grid-template-columns: 1.25fr 1fr; gap:0.4in">
+    <div class="road">
+      <div class="k">1</div><p><b>PreToolUse gate</b>: block production edits until a failing-test artefact exists.<br><span class="muted">Today the mode rules are instructions. When Verifier refused a production edit, Bob switched itself to Agent mode.</span></p>
+      <div class="k">2</div><p><b>Fail-closed verifier</b>: a crashed or partial run must fail, not pass silently.<br><span class="muted">The team-written <code>onramp_normalize.py classify</code> already fails closed.</span></p>
+      <div class="k">3</div><p><b>pytest support</b>: profiles for pytest projects, then Node and Java.</p>
+      <div class="k">4</div><p><b>CI and benchmarks</b>: classify every pull request; add blind benchmarks from real upstream fixes.</p>
+    </div>
+    <div class="card">
+      <h3>Learnings</h3>
+      <ul>
+        <li>A baseline is the difference between "tests are red" and "I broke something".</li>
+        <li>A narrow check misses regressions. Bob's first check ran one app; Verifier's wider run found the 22 errors.</li>
+        <li>Sealing the brief makes an AI fix comparable with a human one.</li>
+        <li>A second repository exposes what a single repository hides.</li>
+      </ul>
+    </div>
   </div>
-  <div class="foot"><span>Roadmap with learnings</span><span>8</span></div>
+  <p class="small muted" style="margin-top:0.22in">Known limitations: see README.</p>
+  <div class="foot"><span>Roadmap with learnings</span><span><span class="brand">OnRamp</span> · 9</span></div>
+</section>
+
+<!-- 10. Links -->
+<section class="slide">
+  <div class="title-band"></div>
+  <div class="kicker">Check every claim</div>
+  <h2>Links and evidence</h2>
+  <div class="linkrow">
+    <div class="lab">Live demo</div><div class="val">kniggukniggu-droid.github.io/onramp-evidence</div>
+    <div class="lab">Code and kit</div><div class="val">github.com/KnigguKniggu-droid/onramp</div>
+    <div class="lab">Bob's blind-fix session</div><div class="val">docs/evidence/BOB_SESSION_webhook-205.md <span class="muted" style="font-family:'Segoe UI',sans-serif; font-size:12pt">(search "22 ERRORs")</span></div>
+    <div class="lab">Bob activity totals</div><div class="val">docs/evidence/BOB_ACTIVITY_TOTALS.md</div>
+    <div class="lab">Linux reproduction</div><div class="val">docs/evidence/LINUX_REPRODUCTION_2026-10-19.md</div>
+  </div>
+  <div class="stats" style="margin-top:0.45in">
+    <div class="stat"><div class="n" style="font-size:30pt">1,761 / 29</div><div class="l">baseline tests / inherited failures</div></div>
+    <div class="stat red"><div class="n" style="font-size:30pt">22 &rarr; 0</div><div class="l">errors in the 48-test webhook suite</div></div>
+    <div class="stat green"><div class="n" style="font-size:30pt">1,767 / 0</div><div class="l">tests / regressions (team's run)</div></div>
+    <div class="stat"><div class="n" style="font-size:30pt">491 / 23</div><div class="l">Bob tool calls / Bob commits</div></div>
+  </div>
+  <p style="margin-top:0.35in; font-size:20pt; font-weight:600; color:var(--blue-dk)">OnRamp makes IBM Bob prove its code changes, not just make them.</p>
+  <div class="foot"><span>Links</span><span><span class="brand">OnRamp</span> · 10</span></div>
 </section>
 
 </body>
