@@ -6,6 +6,12 @@ Steps: 107 · tool calls: 107
 
 Key moments: `switch_mode → reproducer` (failing test first), Bob's first range check breaks 22 tests and Bob says so, `switch_mode → verifier`, revised fix, suites re-run. Search this page for **22 ERRORs**.
 
+**Reader's notes (added by the team; Bob's rows below are unchanged):**
+- Step 23: after the first attempt, Bob's own check ran only `hc.api` and showed only the inherited DST failure. The 22 errors were in `hc.integrations.webhook`; Verifier's wider run caught them (steps 27 to 40).
+- Step 45: Verifier mode refused the production edit, as designed. Bob then switched itself to Agent mode to make it (again at step 89).
+- Step 48: Bob amended commit `5f16187` with `--no-edit`, so the commit contains the final `range(200, 300)` fix while its message still describes the first attempt (`200 <= status < 300`).
+- Steps 55 to 59: after a PowerShell UTF-16 encoding problem, Bob rewrote `pre_fix_webhook-205.txt` from the failing run it had observed (steps 19 and 21) instead of re-running against the unfixed code. A Linux re-run by the team on 2026-10-19 reproduced the same `AssertionError: 3 != 1` at the same line (`LINUX_REPRODUCTION_2026-10-19.md`).
+
 | # | Time (UTC) | Bob said | Tool calls |
 |---|---|---|---|
 | 1 | 2026-10-11 21:05:16 |  | `use_skill` {"skill_name": "map-codebase"} |

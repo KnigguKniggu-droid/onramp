@@ -13,15 +13,17 @@ IBM Bob's plan allowance (180 Bobcoins) ran out on 2026-10-11 while Bob was fixi
   - The kit's tests pass 65/65.
 - **Correct reading of the evidence:**
   - The 1-test post-fix run says nothing about the 29 Windows-only failures: they were **not run**.
-  - the team's independent full verbose run after the fix and feature (1,767 tests, published with the Evidence Explorer) classifies as FULL: 29 inherited, 0 fixed, 0 regressions, 6 new passing tests. Bob's corrected classifier and the browser classifier agree.
+  - The team's independent full verbose run after the fix and feature (1,767 tests, published with the Evidence Explorer) classifies as FULL: 29 inherited, 0 fixed, 0 regressions, 6 new passing tests. Bob's corrected classifier and the browser classifier agree.
 
-## 2. Known limitation in Bob's corrected parser
-Bob's verbose-output parser does not handle tests whose docstring is printed between the test name and its result. Bob's own new test `test_webhooks_accept_http_205` has such a docstring. The parser then finds no outcomes and reports the run as INCONCLUSIVE. This fails safe: the run is not judged at all, rather than being judged wrongly. The browser classifier on the Evidence Explorer handles this case.
+## 2. Known limitations in Bob's corrected classifier
+Bob's verbose-output parser does not handle tests whose docstring is printed between the test name and its result. Bob's own new test `test_webhooks_accept_http_205` has such a docstring. The parser then finds no outcomes and `classify_run()` returns INCONCLUSIVE. This fails safe: the run is not judged at all, rather than being judged wrongly. The browser classifier on the Evidence Explorer handles this case.
+
+**Added 2026-10-19:** the verdict is computed but not shown. `classify_run()` returns `valid` and `run_scope`, but the `gen_report.py classify` command prints only the counts and always exits 0. On a crashed or targeted run it therefore prints `REGRESSION: 0` and `NOT RUN: 29` with exit code 0. Read `NOT RUN > 0` as "no verdict" until this is fixed.
 
 ## 3. Fresh installation needs a profile (workaround added by the team)
 The quick start copies only `.bob/`, but `/onramp`, the skills and the modes read `docs/onramp/profile.json`. Bob's kit has no step that creates it. In the TaskFlow portability runs, Bob created the profile when asked.
 
-The team added a separate, clearly attributed module, `.bob/onramp_normalize.py`, with 12 tests. Bob's files were not changed. In a fresh repository, run this once before `/onramp`:
+The team added a separate, clearly attributed module, `.bob/onramp_normalize.py` (12 tests at the time; 24 now). Bob's files were not changed. In a fresh repository, run this once before `/onramp`:
 
 ```
 python .bob/onramp_normalize.py init-profile --write
@@ -47,7 +49,7 @@ The Evidence Explorer's in-browser demo uses this same Python module as its auth
 - **What the seal proves:** the exact brief text (SHA-256) and the time it was recorded (21:05:38 UTC). It was sealed before Bob began the issue-specific work. It was not sealed before Bob first saw the code: Bob had mapped the repository earlier (`CODEBASE_MAP.md`, 38c4ea2).
 - **Isolation controls, which the seal itself does not record:**
   - Bob worked in a single-commit snapshot of Healthchecks with no remote and no upstream history.
-  - The maintainer's fix existed only in a separate clone that Bob's workspace never referenced, enforced by a guard in the team.
+  - The maintainer's fix existed only in a separate clone that Bob's workspace never referenced, enforced by a workspace guard. Bob's recorded session first reads the reference patch at step 68, after the fix was committed.
   - Bob received the symptoms only.
 - **Empty fields:** the seal's `allowed_information` and `withheld_information` were left empty at the time and are kept as recorded.
 - **Brief wording:** the brief said "a 2xx response such as 205 means the notification was delivered", which invites a broader rule than the maintainer chose.

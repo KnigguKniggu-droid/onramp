@@ -1,4 +1,4 @@
-# Clean-install re-run, 2026-10-13 (the team)
+# Clean-install re-run, 2026-10-13
 
 Written by the team. This re-runs the quick-start path in untouched clones with the **committed** kit, after the normalizer changed that day. Local paths are omitted.
 

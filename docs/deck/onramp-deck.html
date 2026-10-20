@@ -84,7 +84,7 @@
     <div class="step"><b>Verifier mode</b><span>Re-runs tests and classifies every failure: inherited, regression, fixed, unchanged.</span></div>
     <div class="step"><b>Evidence</b><span>Stdlib generator: sealed blind benchmarks, attached reference patches, REPORT_&lt;slug&gt;.md.</span></div>
   </div>
-  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (65 tests). After Bob's allowance ran out, the team added a separately labelled normalizer/bootstrap module (<code>onramp_normalize.py</code>, 23 tests).</div>
+  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (65 tests). After Bob's allowance ran out, the team added a separately labelled normalizer/bootstrap module (<code>onramp_normalize.py</code>, 24 tests).</div>
   <div class="foot"><span>Project summary</span><span>3</span></div>
 </section>
 
@@ -112,7 +112,7 @@
       <ul>
         <li>Healthchecks pinned at upstream <code>0968fa2</code> (the benchmark itself was sealed at kit commit <code>a3acbc3</code>), the commit before the maintainer fixed a real bug: webhooks answering HTTP 205 were retried 3 times and marked failed.</li>
         <li>Bob got only the symptoms. The brief was SHA-256 sealed before the issue-specific work began (Bob had already mapped the codebase).</li>
-        <li>Reproducer: the failing test (<code>3 != 1</code> requests) came first, then a 1-line fix. Independent full-suite run: 0 regressions.</li>
+        <li>Reproducer: the failing test (<code>3 != 1</code> requests) came first, then a 1-line fix. Bob's first attempt broke 22 webhook tests; Verifier caught it and Bob revised the fix. Independent full-suite run: 0 regressions.</li>
         <li>Only after Bob committed did we reveal upstream <code>0a9bff9</code>.</li>
       </ul>
     </div>
@@ -131,7 +131,7 @@
     <div class="card"><h3>Feature #1090 (a user request)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "café"; Bob added a test and fixed it.</p></div>
     <div class="card"><h3>Portability on a Flask app (TaskFlow)</h3><p>The kit was copied unchanged three times. Run 1 exposed Django assumptions (hardcoded paths, output parsing, file names). Bob made the kit profile-driven. Run 2 then found one parser gap, and after Bob's fix run 3 classified the failure correctly.</p></div>
   </div>
-  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a guard mod in the team's tooling blocked the team from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, team-labelled files.</div>
+  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a workspace guard blocked the team from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, team-labelled files.</div>
   <div class="foot"><span>Project summary</span><span>6</span></div>
 </section>
 
@@ -148,7 +148,7 @@
         <li><b>Bob Shell (ACP)</b> ran the portability tests in other repositories.</li>
       </ul>
     </div>
-    <div class="card"><h3>Process, honestly</h3><p>the team directed Bob, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back. Every one of Bob's commits ends with <code>Generated-by: IBM Bob</code>.</p></div>
+    <div class="card"><h3>Process, honestly</h3><p>The team directed Bob, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back. Every one of Bob's commits ends with <code>Generated-by: IBM Bob</code>.</p></div>
   </div>
   <div class="foot"><span>Tool usage</span><span>7</span></div>
 </section>
