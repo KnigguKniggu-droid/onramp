@@ -3,7 +3,7 @@
 **OnRamp makes IBM Bob prove its code changes, not just make them.**
 
 [![Live demo](https://img.shields.io/badge/live%20demo-Evidence%20Explorer-0f62fe)](https://kniggukniggu-droid.github.io/onramp-evidence/)
-[![Bob-written](https://img.shields.io/badge/Bob--written-86.5%25%20of%20kit%20lines-0f62fe)](#how-it-was-built)
+[![Bob-written](https://img.shields.io/badge/Bob--written-85.9%25%20of%20kit%20lines-0f62fe)](#how-it-was-built)
 [![IBM Bob kit](https://img.shields.io/badge/IBM%20Bob-kit-0f62fe)](../.bob/)
 [![Hackathon theme](https://img.shields.io/badge/hackathon-Theme%201-6929c4)](#tldr)
 
@@ -50,7 +50,7 @@ flowchart LR
 - **Problem:** an AI agent edits an unfamiliar repo and the suite goes red. Is that a regression, or was it already broken? Healthchecks has 1,761 tests and 29 of them already fail on Windows.
 - **What OnRamp does:** it turns Bob into an evidence-gated engineer. Bob fingerprints the existing failures first, writes a failing test before any fix, and verifies against the baseline. A newcomer runs it with `/onramp`.
 - **Proof:** in a sealed blind test, Bob fixed a real upstream bug. Bob's first fix broke **22** existing tests; Bob caught it in Verifier mode and revised the fix. The revised fix had 0 new failures. Bob's own words are in the [recorded session](../docs/evidence/BOB_SESSION_webhook-205.md) (search "22 ERRORs").
-- **Bob wrote it:** by `git blame`, 2,452 of the 2,834 lines in `.bob/` (86.5%) and every application-code change (commits `5f16187`, `786c034`, `e4032c2`) come from commits with the `Generated-by: IBM Bob` trailer.
+- **Bob wrote it:** by `git blame`, 2,444 of the 2,846 lines in `.bob/` (85.9%) and every application-code change (commits `5f16187`, `786c034`, `e4032c2`) come from commits with the `Generated-by: IBM Bob` trailer.
 - **Why it matters for teams:** every AI change ships with a pre-fix failure, a post-fix pass, a diff and a report. Reviewers check evidence instead of trusting the agent.
 
 ---
@@ -215,12 +215,9 @@ Planned, not done:
 - Corrections to earlier claims: [`CORRECTIONS_2026-10-11.md`](../docs/evidence/CORRECTIONS_2026-10-11.md).
 - The 1,767-test full-suite run (9.6 s, 0 regressions; log: [`SUITE_FULL_after_fix_independent.txt`](../docs/evidence/SUITE_FULL_after_fix_independent.txt)) the clean-install re-runs and the [Linux reproduction](../docs/evidence/LINUX_REPRODUCTION_2026-10-19.md) were independent checks by the team, not by Bob. Bob's own verify step ran `hc.integrations.webhook` and `hc.api`.
 - An independent audit on 2026-10-19 found these open defects in Bob's kit. They are not fixed, because Bob's allowance is exhausted:
-  - The post-edit hook does not fire when `profile.json` has `source_roots: ["."]`. `init-profile` writes this value when it finds no package. Workaround: set the real package directory.
-  - The hook exits 1, not 0, if it receives empty or malformed input.
-  - On Windows with cp1252 output, piping `python .bob/test_gen_report.py` to a file fails 2 of 65 tests on a `→` character. They pass in a UTF-8 console.
-- The TaskFlow runs validated install, profile, baseline and map. None ran a bug-to-test loop.
+  - The TaskFlow runs validated install, profile, baseline and map. None ran a bug-to-test loop.
 - The post-edit hook tests only the edited file's app. On Bob's broken first fix (an edit in `hc/api`), it would have run `hc.api`, not `hc.integrations.webhook`, where the 22 errors were. Bob's explicit Verifier run caught them.
-- IBM's lifecycle-hooks documentation says `PostToolUse` stdout is ignored, so the hook's PASS/FAIL line may not reach Bob. The hook also reads PASS from an `OK` summary line without checking the runner's exit code.
+- IBM's lifecycle-hooks documentation says `PostToolUse` stdout is ignored, so the hook's PASS/FAIL line may not reach Bob. 
 - `gen_report.py classify` does not print its verdict and always exits 0: `classify_run()` computes INCONCLUSIVE for crashed or partial runs, but the command prints only the counts. Treat `NOT RUN > 0` as no verdict. `gen_report.py report` ticks "no new failures" when regression data is `N/A`. Treat the corrected reports and `onramp_normalize.py classify` (fail-closed) as authoritative.
 - Mode rules are instructions, not enforcement. In the recorded session, Bob ran `git stash`, `git checkout` or `git commit` 11 times in Reproducer and Verifier modes (steps 23–74), which the mode text forbids, and switched itself to Agent mode when Verifier refused a production edit (steps 45 and 89). Roadmap: a `PreToolUse` gate that blocks production edits until a failing-test artefact exists.
 - pytest is not supported. `init-profile` writes a plain `unittest` profile for any repository without `manage.py`.
