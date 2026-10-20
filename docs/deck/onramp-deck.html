@@ -61,7 +61,7 @@
     <div>
       <ul>
         <li>Newcomers inherit large repositories, local quirks and test suites that already fail on their machine.</li>
-        <li>Healthchecks (10k-star Django app): <b>29 of 1,761 tests fail on Windows</b> before anyone changes a line.</li>
+        <li>Healthchecks (an open-source Django app): <b>29 of 1,761 tests fail on Windows</b> before anyone changes a line.</li>
         <li>AI assistants make plausible changes fast, but "it passes" is not evidence when the baseline is red.</li>
       </ul>
       <p style="margin-top:0.25in"><b>Question:</b> can IBM Bob onboard onto unfamiliar code, fix a real bug and add a real feature, so that every claim can be checked?</p>
@@ -94,7 +94,7 @@
   <div class="stats">
     <div class="stat"><div class="n">1,761</div><div class="l">tests in the Healthchecks baseline</div></div>
     <div class="stat"><div class="n">29</div><div class="l">inherited failures, recorded before any change</div></div>
-    <div class="stat"><div class="n">1,766</div><div class="l">tests after Bob's fix and feature</div></div>
+    <div class="stat"><div class="n">1,767</div><div class="l">tests after Bob's fix and feature</div></div>
     <div class="stat"><div class="n">0</div><div class="l">regressions, same 29 failing test IDs</div></div>
   </div>
   <ul style="margin-top:0.35in">
@@ -117,7 +117,7 @@
       </ul>
     </div>
     <div class="card">
-      <h3>Honest comparison (written by Bob)</h3>
+      <h3>Honest comparison (written by Bob; paths later anonymised by the team)</h3>
       <p>Same defect, same line, different policy. Our brief said "a 2xx response such as 205" should succeed; Bob accepts every 2xx response; the maintainer added only 205. Bob's own report concludes the narrower upstream fix is safer, because <code>HttpTransport</code> is shared by about 25 integrations.</p>
     </div>
   </div>
@@ -128,10 +128,10 @@
   <div class="kicker">Result 3 · Build and reuse</div>
   <h2>A real feature, and a kit that is not hardcoded</h2>
   <div class="cols">
-    <div class="card"><h3>Feature #1090 (open since 2024)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "café"; Bob added a test and fixed it.</p></div>
+    <div class="card"><h3>Feature #1090 (a user request)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "café"; Bob added a test and fixed it.</p></div>
     <div class="card"><h3>Portability on a Flask app (TaskFlow)</h3><p>The kit was copied unchanged three times. Run 1 exposed Django assumptions (hardcoded paths, output parsing, file names). Bob made the kit profile-driven. Run 2 then found one parser gap, and after Bob's fix run 3 classified the failure correctly.</p></div>
   </div>
-  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a guard mod in the team's tooling blocked the team from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, the team-labelled files.</div>
+  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a guard mod in the team's tooling blocked the team from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, team-labelled files.</div>
   <div class="foot"><span>Project summary</span><span>6</span></div>
 </section>
 
@@ -141,7 +141,8 @@
   <div class="cols">
     <div>
       <ul>
-        <li><b>Plan mode</b> designed the kit and asked 4 design questions before building.</li>
+        <li><b>Plan mode</b> designed the kit before building.</li>
+        <li><b>491 logged tool calls across 10 recorded tasks</b>, exported from Bob's own task database (docs/evidence/BOB_ACTIVITY_TOTALS.md); the blind fix's full step log is docs/evidence/BOB_SESSION_webhook-205.md.</li>
         <li><b>Agent mode</b> built the modes, skills, commands, hook and generator, each in its own commit.</li>
         <li><b>Custom modes</b> (Reproducer, Verifier) drove the blind fix.</li>
         <li><b>Bob Shell (ACP)</b> ran the portability tests in other repositories.</li>
