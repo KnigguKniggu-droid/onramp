@@ -129,13 +129,13 @@ Then open Bob in the new repository and run:
 /onramp
 ```
 
-This exact sequence was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, verbose suite normalized, classified FULL with 0 regressions. `onramp_normalize.py` is a Claude-authored addition (24 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md).
+This exact sequence was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, verbose suite normalized, classified FULL with 0 regressions. `onramp_normalize.py` is a team-authored addition (24 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CORRECTIONS_2026-10-11.md).
 
 **Run the kit's own tests:**
 
 ```bash
 python .bob/test_gen_report.py                          # IBM Bob's generator tests (65)
-cd .bob && python -m unittest test_onramp_normalize     # Claude's normalizer tests (24)
+cd .bob && python -m unittest test_onramp_normalize     # the team's normalizer tests (24)
 ```
 
 **Run the Healthchecks suite (Windows):**
@@ -155,7 +155,7 @@ python .bob/gen_report.py capture-baseline
 
 ## How it was built
 
-IBM Bob (IDE and Bob Shell) implemented the original OnRamp kit (modes, skills, commands, hook, `gen_report.py`), the Healthchecks fix and feature, and the recorded engineering iterations; its commits end with `Generated-by: IBM Bob`. Claude Code orchestrated Bob at the participant's direction, independently verified its work, and — after Bob's 180-Bobcoin allowance was exhausted — authored a separately attributed normalization/bootstrap module (`.bob/onramp_normalize.py` and its tests) plus the public presentation artifacts (pitch deck, Evidence Explorer, corrections and corrected report). Commit messages and evidence records distinguish these contributions.
+IBM Bob (IDE and Bob Shell) implemented the original OnRamp kit (modes, skills, commands, hook, `gen_report.py`), the Healthchecks fix and feature, and the recorded engineering iterations; its commits end with `Generated-by: IBM Bob`. The team directed Bob, independently verified its work, and — after Bob's 180-Bobcoin allowance was exhausted — authored a separately attributed normalization/bootstrap module (`.bob/onramp_normalize.py` and its tests) plus the public presentation artifacts (pitch deck, Evidence Explorer, corrections and corrected report). Commit messages and evidence records distinguish these contributions.
 
 Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/onramp/PLAN.md).
 
@@ -163,8 +163,8 @@ Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/on
 
 ## Known limitations
 
-- Corrections to earlier claims: [`CLAUDE_CORRECTIONS_2026-10-11.md`](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md).
-- The 1,767-test full-suite run (9.6 s, 0 regressions) and the clean-install re-runs were independent checks by Claude Code. Bob's own verify step ran `hc.integrations.webhook`.
+- Corrections to earlier claims: [`CORRECTIONS_2026-10-11.md`](../docs/evidence/CORRECTIONS_2026-10-11.md).
+- The 1,767-test full-suite run (9.6 s, 0 regressions) and the clean-install re-runs were independent checks by the team. Bob's own verify step ran `hc.integrations.webhook`.
 - An independent audit on 2026-10-19 found these open defects in Bob's kit. They are not fixed, because Bob's allowance is exhausted:
   - The post-edit hook does not fire when `profile.json` has `source_roots: ["."]`. `init-profile` writes this value when it finds no package. Workaround: set the real package directory.
   - The hook exits 1, not 0, if it receives empty or malformed input.

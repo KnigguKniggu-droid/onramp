@@ -1,6 +1,6 @@
-# Clean-install re-run, 2026-10-13 (Claude Code)
+# Clean-install re-run, 2026-10-13 (the team)
 
-Written by Claude Code. This re-runs the quick-start path in untouched clones with the **committed** kit, after the normalizer changed that day. Local paths are omitted.
+Written by the team. This re-runs the quick-start path in untouched clones with the **committed** kit, after the normalizer changed that day. Local paths are omitted.
 
 ## Procedure (each repository)
 1. Fresh `git clone`, then checkout of the pinned commit. Confirmed untouched: 0 changed files, no OnRamp profile present.

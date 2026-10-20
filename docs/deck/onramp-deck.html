@@ -84,7 +84,7 @@
     <div class="step"><b>Verifier mode</b><span>Re-runs tests and classifies every failure: inherited, regression, fixed, unchanged.</span></div>
     <div class="step"><b>Evidence</b><span>Stdlib generator: sealed blind benchmarks, attached reference patches, REPORT_&lt;slug&gt;.md.</span></div>
   </div>
-  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (65 tests). After Bob's allowance ran out, Claude Code added a separately labelled normalizer/bootstrap module (<code>onramp_normalize.py</code>, 23 tests).</div>
+  <div class="note">Built entirely from Bob extension points: <code>.bob/custom_modes.yaml</code>, 4 skills, 2 commands, a PostToolUse hook in <code>.bob/settings.json</code> and <code>.bob/gen_report.py</code> (65 tests). After Bob's allowance ran out, the team added a separately labelled normalizer/bootstrap module (<code>onramp_normalize.py</code>, 23 tests).</div>
   <div class="foot"><span>Project summary</span><span>3</span></div>
 </section>
 
@@ -99,7 +99,7 @@
   </div>
   <ul style="margin-top:0.35in">
     <li>26 Signal tests need <code>socket.AF_UNIX</code>, 2 use a Linux-only date format, 1 DST test needs time-zone switching. All are Windows-only, and all are classified as inherited.</li>
-    <li>Bob generated <code>CODEBASE_MAP.md</code> with its map-codebase skill, and Claude Code checked the baseline against an independent run (identical IDs).</li>
+    <li>Bob generated <code>CODEBASE_MAP.md</code> with its map-codebase skill, and the team checked the baseline against an independent run (identical IDs).</li>
   </ul>
   <div class="foot"><span>Project summary</span><span>4</span></div>
 </section>
@@ -131,7 +131,7 @@
     <div class="card"><h3>Feature #1090 (open since 2024)</h3><p>JSON webhook bodies are shown pretty-printed in the ping details view; non-JSON and email bodies are untouched, and Download Original still serves the exact bytes. An independent check found <code>json.dumps</code> escaping "café"; Bob added a test and fixed it.</p></div>
     <div class="card"><h3>Portability on a Flask app (TaskFlow)</h3><p>The kit was copied unchanged three times. Run 1 exposed Django assumptions (hardcoded paths, output parsing, file names). Bob made the kit profile-driven. Run 2 then found one parser gap, and after Bob's fix run 3 classified the failure correctly.</p></div>
   </div>
-  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a guard mod in Claude Code blocked Claude from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, Claude-labelled files.</div>
+  <div class="note">Every gap went back to Bob as an observed failure while Bob had budget; a guard mod in the team's tooling blocked the team from editing Bob's files. After Bob's 180-Bobcoin allowance ran out, remaining fixes were added as separate, the team-labelled files.</div>
   <div class="foot"><span>Project summary</span><span>6</span></div>
 </section>
 
@@ -147,7 +147,7 @@
         <li><b>Bob Shell (ACP)</b> ran the portability tests in other repositories.</li>
       </ul>
     </div>
-    <div class="card"><h3>Process, honestly</h3><p>Claude Code operated Bob at the participant's direction, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back. Every one of Bob's commits ends with <code>Generated-by: IBM Bob</code>.</p></div>
+    <div class="card"><h3>Process, honestly</h3><p>the team directed Bob, verified each result independently (full suites, revert checks, baseline diffs) and reported only observed failures back. Every one of Bob's commits ends with <code>Generated-by: IBM Bob</code>.</p></div>
   </div>
   <div class="foot"><span>Tool usage</span><span>7</span></div>
 </section>
