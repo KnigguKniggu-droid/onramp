@@ -1,5 +1,12 @@
 # OnRamp: an IBM Bob kit for joining an unfamiliar codebase
 
+**OnRamp makes IBM Bob prove its code changes, not just make them.**
+
+[![Live demo](https://img.shields.io/badge/live%20demo-Evidence%20Explorer-0f62fe)](https://kniggukniggu-droid.github.io/onramp-evidence/)
+[![Bob-written](https://img.shields.io/badge/Bob--written-86.5%25%20of%20kit%20lines-0f62fe)](#how-it-was-built)
+[![IBM Bob kit](https://img.shields.io/badge/IBM%20Bob-kit-0f62fe)](../.bob/)
+[![Hackathon theme](https://img.shields.io/badge/hackathon-Theme%201-6929c4)](#tldr)
+
 A drop-in kit that takes a developer from "never seen this repo" to a verified bug fix with sealed evidence, using only Bob-native extension points.
 
 > **Derived from [healthchecks/healthchecks](https://github.com/healthchecks/healthchecks) at commit `0968fa2` (BSD-3-Clause, see [LICENSE](../LICENSE)).  This repository is not affiliated with the Healthchecks project.**
@@ -7,6 +14,34 @@ A drop-in kit that takes a developer from "never seen this repo" to a verified b
 **[Evidence Explorer (live demo)](https://kniggukniggu-droid.github.io/onramp-evidence/)** · **[Pitch deck (PDF)](../docs/deck/OnRamp-pitch-deck.pdf)** · **[Bob's recorded session](../docs/evidence/BOB_SESSION_webhook-205.md)** · **[Bob activity: 491 tool calls, 10 tasks](../docs/evidence/BOB_ACTIVITY_TOTALS.md)**
 
 **The kit is the files in [`.bob/`](../.bob/). Everything outside `.bob/` and `docs/` is upstream Healthchecks, used as the unfamiliar codebase.**
+
+## Judge path in 60 seconds
+
+1. **Sealed brief.** The bug brief was hashed and timestamped before Bob started reproducing the bug: [`benchmark_webhook-205.json`](../docs/onramp/evidence/benchmark_webhook-205.json).
+2. **Bob's failing test first.** `AssertionError: 3 != 1` before any fix: [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt) (see the disclosure in [Blind fix](#blind-fix--webhook-http-205-bug)).
+3. **Bob catches its own regression.** Open [`BOB_SESSION_webhook-205.md`](../docs/evidence/BOB_SESSION_webhook-205.md) and search "22 ERRORs".
+4. **Full suite after the fix.** 1,767 tests, 0 regressions, run independently by the team: [`SUITE_FULL_after_fix_independent.txt`](../docs/evidence/SUITE_FULL_after_fix_independent.txt).
+5. **Linux reproduction.** The team re-ran the failing test on Linux and got the same failure: [`LINUX_REPRODUCTION_2026-10-19.md`](../docs/evidence/LINUX_REPRODUCTION_2026-10-19.md).
+6. **Live classifier.** The [Evidence Explorer](https://kniggukniggu-droid.github.io/onramp-evidence/) runs a baseline-aware classifier demo in the browser. The team wrote it; a CI parity check compares it with `onramp_normalize.py`.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["/onramp"] --> B["Explorer mode<br/>read-only codebase map"]
+    B --> C["Baseline fingerprint<br/>existing failures recorded"]
+    C --> D["Reproducer mode<br/>failing test first"]
+    D --> E["Fix"]
+    E --> F["Verifier mode<br/>baseline-aware verdict"]
+    F -->|regression found| E
+    F -->|no new failures| G["Evidence report<br/>pre-fix, post-fix, diff"]
+```
+
+## Why teams would use this
+
+- **Onboarding legacy code.** A newcomer runs `/onramp`. Explorer mode and the `map-codebase` skill map the repository read-only before anyone changes it.
+- **Reviewer-checkable AI changes.** Every change ships with a pre-fix failure, a post-fix pass, a diff and a report. Reviewers check evidence instead of trusting the agent.
+- **Inherited-failure noise removed.** The baseline separates failures that were already there (29 on Windows for Healthchecks) from regressions the change introduced.
 
 ## TL;DR
 
@@ -159,6 +194,17 @@ python .bob/gen_report.py capture-baseline
 IBM Bob (IDE and Bob Shell) implemented the original OnRamp kit (modes, skills, commands, hook, `gen_report.py`), the Healthchecks fix and feature, and the recorded engineering iterations; its commits end with `Generated-by: IBM Bob`. The team directed Bob, independently verified its work, and — after Bob's 180-Bobcoin allowance was exhausted — authored a separately attributed normalization/bootstrap module (`.bob/onramp_normalize.py` and its tests) plus the public presentation artifacts (pitch deck, Evidence Explorer, corrections and corrected report). Commit messages and evidence records distinguish these contributions.
 
 Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/onramp/PLAN.md).
+
+---
+
+## Roadmap
+
+Planned, not done:
+
+- A `PreToolUse` gate that blocks production edits until a failing-test artefact exists (reproduce-first enforced, not only instructed).
+- Fail-closed CLI exit codes: `classify` prints its verdict and exits non-zero on regressions or INCONCLUSIVE runs.
+- A pytest adapter for profiles, parsing and classification.
+- Structured per-edit hook results that reach Bob, instead of a PASS/FAIL line on `PostToolUse` stdout.
 
 ---
 
