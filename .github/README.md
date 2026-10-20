@@ -4,7 +4,16 @@ A drop-in kit that takes a developer from "never seen this repo" to a verified b
 
 > **Derived from [healthchecks/healthchecks](https://github.com/healthchecks/healthchecks) at commit `0968fa2` (BSD-3-Clause, see [LICENSE](../LICENSE)).  This repository is not affiliated with the Healthchecks project.**
 
-**[Evidence Explorer (live demo)](https://kniggukniggu-droid.github.io/onramp-evidence/)** · **[Pitch deck (PDF)](../docs/deck/OnRamp-pitch-deck.pdf)** · **[Corrections and known limitations](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md)**
+**[Evidence Explorer (live demo)](https://kniggukniggu-droid.github.io/onramp-evidence/)** · **[Pitch deck (PDF)](../docs/deck/OnRamp-pitch-deck.pdf)** · **[Bob's recorded session](../docs/evidence/BOB_SESSION_webhook-205.md)**
+
+**The kit is the files in [`.bob/`](../.bob/). Everything outside `.bob/` and `docs/` is upstream Healthchecks, used as the unfamiliar codebase.**
+
+## TL;DR
+
+- **Problem:** an AI agent edits an unfamiliar repo and the suite goes red. Is that a regression, or was it already broken? Healthchecks has 1,761 tests and 29 of them already fail on Windows.
+- **What OnRamp does:** it turns Bob into an evidence-gated engineer. Bob fingerprints the existing failures first, writes a failing test before any fix, and verifies against the baseline. A newcomer runs it with `/onramp`.
+- **Proof:** in a sealed blind test, Bob fixed a real upstream bug. Bob's first fix broke **22** existing tests; Bob caught it in Verifier mode and revised the fix. The revised fix had 0 new failures. Bob's own words are in the [recorded session](../docs/evidence/BOB_SESSION_webhook-205.md) (search "22 ERRORs").
+- **Why it matters for teams:** every AI change ships with a pre-fix failure, a post-fix pass, a diff and a report. Reviewers check evidence instead of trusting the agent.
 
 ---
 
@@ -54,6 +63,7 @@ These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evid
 1. `seal-benchmark` recorded the brief SHA-256 and timestamp.
 2. `bug-to-test` skill wrote `test_webhooks_accept_http_205` — failing (`AssertionError: 3 != 1`, call count instead of 1) — before any fix was written.  Output saved to [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt).
 3. Reproducer mode wrote the fix (1 line in `hc/api/transports.py`).
+   **Bob caught its own regression:** the first attempt, `if not (200 <= r.status_code < 300):`, gave 48 tests with **22 ERRORs**. Bob's recorded words were "These 22 errors are regressions introduced by my fix!" Existing tests use a `MagicMock` status code, and the chained comparison breaks on it. Bob found this in Verifier mode (session steps 27 and 40), then changed the fix to `not in range(200, 300)` (steps 43–46, commit `5f16187`). See [`BOB_SESSION_webhook-205.md`](../docs/evidence/BOB_SESSION_webhook-205.md).
 4. Verifier mode re-ran the test (PASS), ran the full `hc.integrations.webhook` suite, and `classify` reported **0 regressions**.
 5. `attach-patch` recorded the upstream maintainer's later fix ([`reference_upstream_0a9bff9.patch`](../docs/onramp/evidence/reference_upstream_0a9bff9.patch)) for comparison.
 
@@ -97,15 +107,19 @@ The `.bob/` directory was copied unchanged into a separate Flask project called 
 
 ## Quick start
 
-**Drop the kit into another repository** — copy only `.bob/`; `docs/onramp/` holds Healthchecks-specific evidence and should not be copied:
+**Prerequisites:** IBM Bob (IDE), Python 3.10+, and Node.js 18+ (the post-edit hook is a `.mjs` script). **Supported today:** Django and plain `unittest` projects.
 
-```
-cp -r .bob/ <your-repo>/.bob/
+**Drop the kit into another repository.** Copy only `.bob/`. `docs/onramp/` holds Healthchecks-specific evidence and should not be copied.
+
+```bash
+cp -R .bob <your-repo>/                      # macOS / Linux / Git Bash
+Copy-Item -Recurse .bob <your-repo>\         # Windows PowerShell
 ```
 
-Create the repository profile (detects Django or plain unittest; review the result):
+Create the repository profile from inside the target repo. It detects Django or plain unittest; review the result. Use `python3` on macOS/Linux if `python` is not Python 3.
 
-```
+```bash
+cd <your-repo>
 python .bob/onramp_normalize.py init-profile --write
 ```
 
@@ -144,3 +158,15 @@ python .bob/gen_report.py capture-baseline
 IBM Bob (IDE and Bob Shell) implemented the original OnRamp kit (modes, skills, commands, hook, `gen_report.py`), the Healthchecks fix and feature, and the recorded engineering iterations; its commits end with `Generated-by: IBM Bob`. Claude Code orchestrated Bob at the participant's direction, independently verified its work, and — after Bob's 180-Bobcoin allowance was exhausted — authored a separately attributed normalization/bootstrap module (`.bob/onramp_normalize.py` and its tests) plus the public presentation artifacts (pitch deck, Evidence Explorer, corrections and corrected report). Commit messages and evidence records distinguish these contributions.
 
 Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/onramp/PLAN.md).
+
+---
+
+## Known limitations
+
+- Corrections to earlier claims: [`CLAUDE_CORRECTIONS_2026-10-11.md`](../docs/evidence/CLAUDE_CORRECTIONS_2026-10-11.md).
+- The 1,767-test full-suite run (9.6 s, 0 regressions) and the clean-install re-runs were independent checks by Claude Code. Bob's own verify step ran `hc.integrations.webhook`.
+- An independent audit on 2026-10-19 found these open defects in Bob's kit. They are not fixed, because Bob's allowance is exhausted:
+  - The post-edit hook does not fire when `profile.json` has `source_roots: ["."]`. `init-profile` writes this value when it finds no package. Workaround: set the real package directory.
+  - The hook exits 1, not 0, if it receives empty or malformed input.
+  - On Windows with cp1252 output, piping `python .bob/test_gen_report.py` to a file fails 2 of 65 tests on a `→` character. They pass in a UTF-8 console.
+- The TaskFlow runs validated install, profile, baseline and map. None ran a bug-to-test loop.
