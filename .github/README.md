@@ -13,6 +13,7 @@ A drop-in kit that takes a developer from "never seen this repo" to a verified b
 - **Problem:** an AI agent edits an unfamiliar repo and the suite goes red. Is that a regression, or was it already broken? Healthchecks has 1,761 tests and 29 of them already fail on Windows.
 - **What OnRamp does:** it turns Bob into an evidence-gated engineer. Bob fingerprints the existing failures first, writes a failing test before any fix, and verifies against the baseline. A newcomer runs it with `/onramp`.
 - **Proof:** in a sealed blind test, Bob fixed a real upstream bug. Bob's first fix broke **22** existing tests; Bob caught it in Verifier mode and revised the fix. The revised fix had 0 new failures. Bob's own words are in the [recorded session](../docs/evidence/BOB_SESSION_webhook-205.md) (search "22 ERRORs").
+- **Bob wrote it:** by `git blame`, 2,452 of the 2,834 lines in `.bob/` (86.5%) and every application-code change (commits `5f16187`, `786c034`, `e4032c2`) come from commits with the `Generated-by: IBM Bob` trailer.
 - **Why it matters for teams:** every AI change ships with a pre-fix failure, a post-fix pass, a diff and a report. Reviewers check evidence instead of trusting the agent.
 
 ---
@@ -64,7 +65,7 @@ These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evid
 2. `bug-to-test` skill wrote `test_webhooks_accept_http_205` — failing (`AssertionError: 3 != 1`, call count instead of 1) — before any fix was written.  Output saved to [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt).  **Disclosure:** the failing run is real (session step 19). Bob's first saved copy was UTF-16 because of PowerShell redirection. After the fix was committed, Bob rewrote `pre_fix_webhook-205.txt` by hand from the output it had already observed, without re-running against the unfixed code (session steps 55–59).
 3. Reproducer mode wrote the fix (1 line in `hc/api/transports.py`).
    **Bob caught its own regression:** the first attempt, `if not (200 <= r.status_code < 300):`, gave 48 tests with **22 ERRORs**. Bob's recorded words were "These 22 errors are regressions introduced by my fix!" Existing tests use a `MagicMock` status code, and the chained comparison breaks on it. Bob found this in Verifier mode (session steps 27 and 40), then changed the fix to `not in range(200, 300)` (steps 43–46, commit `5f16187`). See [`BOB_SESSION_webhook-205.md`](../docs/evidence/BOB_SESSION_webhook-205.md).
-4. Verifier mode re-ran the test (PASS), ran the full `hc.integrations.webhook` suite, and `classify` reported **0 regressions**.
+4. Verifier mode re-ran the test (PASS), ran the full `hc.integrations.webhook` suite (48 tests, OK), and generated the evidence report with `gen_report.py report`. That report's original classification was wrong; see the corrected report below.
 5. `attach-patch` recorded the upstream maintainer's later fix ([`reference_upstream_0a9bff9.patch`](../docs/onramp/evidence/reference_upstream_0a9bff9.patch)) for comparison.
 
 **Evidence report:** [corrected report, 2026-10-12](../docs/evidence/CORRECTED_REPORT_webhook-205_2026-10-12.md) · [historical report — superseded; contains an incorrect classification from a targeted test run](../docs/onramp/evidence/REPORT_webhook-205.md)
@@ -129,7 +130,7 @@ Then open Bob in the new repository and run:
 /onramp
 ```
 
-This exact sequence was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, verbose suite normalized, classified FULL with 0 regressions. `onramp_normalize.py` is a team-authored addition (24 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CORRECTIONS_2026-10-11.md).
+The `init-profile` step, plus normalizing and classifying a verbose suite run, was tested on untouched Django (Healthchecks 0968fa2) and Flask (TaskFlow) clones: profile created, classified FULL with 0 regressions. The `/onramp` step itself was not re-run in those clean installs, and the generated profile does not yet include the `apps` and `venv_activate` keys that `/onramp` lists. `onramp_normalize.py` is a team-authored addition (24 tests, `.bob/test_onramp_normalize.py`); see [corrections and known limitations](../docs/evidence/CORRECTIONS_2026-10-11.md).
 
 **Run the kit's own tests:**
 
@@ -170,3 +171,8 @@ Full design rationale and sub-task breakdown: [`docs/onramp/PLAN.md`](../docs/on
   - The hook exits 1, not 0, if it receives empty or malformed input.
   - On Windows with cp1252 output, piping `python .bob/test_gen_report.py` to a file fails 2 of 65 tests on a `→` character. They pass in a UTF-8 console.
 - The TaskFlow runs validated install, profile, baseline and map. None ran a bug-to-test loop.
+- The post-edit hook tests only the edited file's app. On Bob's broken first fix (an edit in `hc/api`), it would have run `hc.api`, not `hc.integrations.webhook`, where the 22 errors were. Bob's explicit Verifier run caught them.
+- IBM's lifecycle-hooks documentation says `PostToolUse` stdout is ignored, so the hook's PASS/FAIL line may not reach Bob. The hook also reads PASS from an `OK` summary line without checking the runner's exit code.
+- `gen_report.py classify` prints its verdict but always exits 0. `gen_report.py report` ticks "no new failures" when regression data is `N/A`. Treat the corrected reports and `onramp_normalize.py classify` (fail-closed) as authoritative.
+- Mode rules are instructions, not enforcement. In the recorded session, Bob ran `git stash`, `git checkout` or `git commit` 11 times in Reproducer and Verifier modes (steps 23–74), which the mode text forbids, and switched itself to Agent mode when Verifier refused a production edit (steps 45 and 89). Roadmap: a `PreToolUse` gate that blocks production edits until a failing-test artefact exists.
+- Feature #1090 re-serializes JSON for display, so very high-precision floats are shown rounded (for example `0.12345678901234567890` shows as `0.12345678901234568`). **Download Original** still serves the exact bytes.
