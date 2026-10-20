@@ -7,7 +7,7 @@ IBM Bob's plan allowance (180 Bobcoins) ran out on 2026-10-11 while Bob was fixi
   - `docs/onramp/evidence/REPORT_webhook-205.md` reports "Fixed pre-existing failures: 29, Inherited: 0". Those numbers came from `post_fix_webhook-205.txt`, a 1-test run.
   - The original classifier counted every baseline failure that was absent from the run as fixed (`fixed = baseline − run`), including failures that simply never ran.
 - **Bob's fix:**
-  - Bob reproduced the defect with failing tests (5c0b878) and fixed it (2a527f8): FIXED now requires the test to have run and passed, and absent tests are NOT RUN.
+  - Bob reproduced the defect with failing tests (a5783af) and fixed it (ec3473d): FIXED now requires the test to have run and passed, and absent tests are NOT RUN.
   - Incomplete runs are INCONCLUSIVE.
   - Evidence files with a BOM or in UTF-16 are now read correctly.
   - The kit's tests pass 65/65.

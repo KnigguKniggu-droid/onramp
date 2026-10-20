@@ -11,7 +11,7 @@ Written by the team. This re-runs the quick-start path in untouched clones with 
 6. **Fail-closed check:** give one baseline failure an unknown status (`CRASH`) and classify again. This must be INCONCLUSIVE, never "fixed".
 
 ## Result
-| Repository | Pinned commit | First attempt (kit e3c712f) | Re-run (kit 187c8fe) |
+| Repository | Pinned commit | First attempt (kit 658689e) | Re-run (kit a888e6f) |
 |---|---|---|---|
 | Healthchecks (Django) | upstream `0968fa2` | **Inconclusive**: 1,760 of 1,761 results parsed (see below) | **Valid, FULL**: 1,761 parsed, 29 inherited, 0 regressions, 1,732 unchanged |
 | TaskFlow (Flask, unittest) | `a380909` | Valid, FULL: 4 tests, 1 inherited | Valid, FULL: 4 tests, 1 inherited, 3 unchanged |
@@ -29,4 +29,4 @@ ok
 
 The parser expected each header at the start of a line, so it missed that test. "Ran 1761" did not match the 1,760 parsed results, so the run was reported as inconclusive. That is the intended fail-closed behaviour, but a new user would hit it.
 
-Fix in commit 187c8fe: a header may also directly follow `...`. A regression test reproduces the exact interleaving, bringing the suite to 24 tests. Bob's `gen_report.py` is unchanged.
+Fix in commit a888e6f: a header may also directly follow `...`. A regression test reproduces the exact interleaving, bringing the suite to 24 tests. Bob's `gen_report.py` is unchanged.

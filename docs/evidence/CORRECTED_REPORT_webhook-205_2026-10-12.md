@@ -5,7 +5,7 @@ This supersedes the classification section of `docs/onramp/evidence/REPORT_webho
 ## What changed in the classification
 | Run | Original report (old classifier) | Corrected |
 |---|---|---|
-| `post_fix_webhook-205.txt`, a 1-test run of `test_webhooks_accept_http_205` | 29 fixed, 0 inherited | **No verdict on the 29 baseline failures: none of them ran.** IBM Bob's corrected classifier (`gen_report.py`, 2a527f8) reports the run as INCONCLUSIVE, with NOT RUN = 29. Its parser does not read this test's docstring line (a known limitation). `onramp_normalize.py` (the team) reports the run as TARGETED: valid, 1 new passing test, 1,761 baseline tests not run, 0 fixed. |
+| `post_fix_webhook-205.txt`, a 1-test run of `test_webhooks_accept_http_205` | 29 fixed, 0 inherited | **No verdict on the 29 baseline failures: none of them ran.** IBM Bob's corrected classifier (`gen_report.py`, ec3473d) reports the run as INCONCLUSIVE, with NOT RUN = 29. Its parser does not read this test's docstring line (a known limitation). `onramp_normalize.py` (the team) reports the run as TARGETED: valid, 1 new passing test, 1,761 baseline tests not run, 0 fixed. |
 | Full verbose suite after Bob's fix and feature (1,767 tests, captured 2026-10-11 by the team) | n/a | **FULL: 29 inherited, 0 fixed, 0 regressions, 0 new failures, 6 new passing tests, 1,732 unchanged passes.** |
 
 ## Sources
