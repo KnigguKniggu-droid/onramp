@@ -2,6 +2,7 @@
 
 **OnRamp makes IBM Bob prove its code changes, not just make them.**
 
+[![Demo video](https://img.shields.io/badge/demo%20video-YouTube-red)](https://youtu.be/DYtMVaG5O8s)
 [![Live demo](https://img.shields.io/badge/live%20demo-Evidence%20Explorer-0f62fe)](https://kniggukniggu-droid.github.io/onramp-evidence/)
 [![Bob-written](https://img.shields.io/badge/Bob--written-85.9%25%20of%20kit%20lines-0f62fe)](#how-it-was-built)
 [![IBM Bob kit](https://img.shields.io/badge/IBM%20Bob-kit-0f62fe)](../.bob/)
