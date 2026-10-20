@@ -4,7 +4,7 @@ A drop-in kit that takes a developer from "never seen this repo" to a verified b
 
 > **Derived from [healthchecks/healthchecks](https://github.com/healthchecks/healthchecks) at commit `0968fa2` (BSD-3-Clause, see [LICENSE](../LICENSE)).  This repository is not affiliated with the Healthchecks project.**
 
-**[Evidence Explorer (live demo)](https://kniggukniggu-droid.github.io/onramp-evidence/)** · **[Pitch deck (PDF)](../docs/deck/OnRamp-pitch-deck.pdf)** · **[Bob's recorded session](../docs/evidence/BOB_SESSION_webhook-205.md)**
+**[Evidence Explorer (live demo)](https://kniggukniggu-droid.github.io/onramp-evidence/)** · **[Pitch deck (PDF)](../docs/deck/OnRamp-pitch-deck.pdf)** · **[Bob's recorded session](../docs/evidence/BOB_SESSION_webhook-205.md)** · **[Bob activity: 491 tool calls, 10 tasks](../docs/evidence/BOB_ACTIVITY_TOTALS.md)**
 
 **The kit is the files in [`.bob/`](../.bob/). Everything outside `.bob/` and `docs/` is upstream Healthchecks, used as the unfamiliar codebase.**
 
@@ -61,7 +61,7 @@ These are recorded in [`docs/onramp/evidence/baseline.json`](../docs/onramp/evid
 
 **Workflow:**
 1. `seal-benchmark` recorded the brief SHA-256 and timestamp.
-2. `bug-to-test` skill wrote `test_webhooks_accept_http_205` — failing (`AssertionError: 3 != 1`, call count instead of 1) — before any fix was written.  Output saved to [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt).
+2. `bug-to-test` skill wrote `test_webhooks_accept_http_205` — failing (`AssertionError: 3 != 1`, call count instead of 1) — before any fix was written.  Output saved to [`pre_fix_webhook-205.txt`](../docs/onramp/evidence/pre_fix_webhook-205.txt).  **Disclosure:** the failing run is real (session step 19). Bob's first saved copy was UTF-16 because of PowerShell redirection. After the fix was committed, Bob rewrote `pre_fix_webhook-205.txt` by hand from the output it had already observed, without re-running against the unfixed code (session steps 55–59).
 3. Reproducer mode wrote the fix (1 line in `hc/api/transports.py`).
    **Bob caught its own regression:** the first attempt, `if not (200 <= r.status_code < 300):`, gave 48 tests with **22 ERRORs**. Bob's recorded words were "These 22 errors are regressions introduced by my fix!" Existing tests use a `MagicMock` status code, and the chained comparison breaks on it. Bob found this in Verifier mode (session steps 27 and 40), then changed the fix to `not in range(200, 300)` (steps 43–46, commit `5f16187`). See [`BOB_SESSION_webhook-205.md`](../docs/evidence/BOB_SESSION_webhook-205.md).
 4. Verifier mode re-ran the test (PASS), ran the full `hc.integrations.webhook` suite, and `classify` reported **0 regressions**.

@@ -1,6 +1,6 @@
 # IBM Bob session excerpt: blind fix, webhook HTTP 205 (task d2fe2053)
 
-Exported read-only by the team on 2026-10-19 from IBM Bob IDE's own task database (a copy of `bob.db`). Nothing was edited except: local home paths shown as `~`, and tool arguments longer than 220 characters are truncated with `…`. Bob's own messages are verbatim. Timestamps are UTC from the database.
+Exported read-only on 2026-10-19 from IBM Bob IDE's own task database (a copy of `bob.db`). Nothing was edited except: local home paths shown as `~`, and tool arguments longer than 220 characters are truncated with `…`. Bob's own messages are verbatim. Timestamps are UTC from the database.
 
 Steps: 107 · tool calls: 107
 
