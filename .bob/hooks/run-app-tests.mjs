@@ -21,7 +21,12 @@ import { join } from "node:path";
 let raw = "";
 for await (const chunk of process.stdin) raw += chunk;
 
-const input = JSON.parse(raw);
+let input;
+try {
+  input = JSON.parse(raw);
+} catch {
+  process.exit(0); // empty or malformed hook payload: never block Bob
+}
 const cwd = input.cwd ?? process.cwd();
 
 // Only react to file-write tools
@@ -52,7 +57,9 @@ try {
 // Only fire for files under one of the watched source roots
 const normalized = editedPath.replace(/\\/g, "/");
 const sourceRoots = profile.source_roots ?? [profile.app_root ?? "hc"];
-const watched = sourceRoots.some((root) => normalized.startsWith(root + "/"));
+const watched = sourceRoots.some(
+  (root) => root === "." || root === "" || normalized.startsWith(root.replace(/\/$/, "") + "/"),
+);
 if (!watched) process.exit(0);
 
 const framework = (profile.framework ?? "django").toLowerCase();
@@ -98,7 +105,7 @@ const summary = summaryMatch
   : (output.split("\n").filter((l) => l.trim()).pop() ?? "");
 
 // Determine pass/fail
-const passed = /^OK/.test(summary);
+const passed = result.status === 0 && /^OK/.test(summary);
 const statusIcon = passed ? "PASS" : "FAIL";
 
 process.stdout.write(

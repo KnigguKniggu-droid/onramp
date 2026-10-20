@@ -535,7 +535,7 @@ class TestGenerateReport(unittest.TestCase):
         self.assertIn(self.slug, text)
         self.assertIn("[x] Test existed before fix and was FAIL", text)
         self.assertIn("[x] Test passes after fix", text)
-        self.assertIn("[x] No new failures in app suite", text)
+        self.assertIn("[ ] No new failures in app suite (regression check: N/A)", text)
         self.assertIn("[ ] Diff is minimal", text)
 
     def test_pre_fail_flag_set(self):
@@ -563,7 +563,7 @@ class TestGenerateReport(unittest.TestCase):
         self._write_fixtures()  # no baseline written
         text = gr.generate_report(self.slug, self.ev_dir).read_text(encoding="utf-8")
         # No baseline → N/A → treated as no regression
-        self.assertIn("[x] No new failures in app suite", text)
+        self.assertIn("[ ] No new failures in app suite (regression check: N/A)", text)
 
     def test_regression_detected_with_baseline(self):
         baseline = _make_baseline(tests_run=10, failing_ids=[])

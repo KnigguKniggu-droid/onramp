@@ -517,7 +517,7 @@ def seal_benchmark(
     evidence_dir.mkdir(parents=True, exist_ok=True)
     out = evidence_dir / f"benchmark_{slug}.json"
     out.write_text(json.dumps(record, indent=2), encoding="utf-8")
-    print(f"[benchmark] sealed → {out}", flush=True)
+    print(f"[benchmark] sealed -> {out}", flush=True)
     return record
 
 
@@ -553,7 +553,7 @@ def attach_patch(
         "tests_added": len(test_files),
     }
     bench_path.write_text(json.dumps(record, indent=2), encoding="utf-8")
-    print(f"[benchmark] patch attached → {bench_path}", flush=True)
+    print(f"[benchmark] patch attached -> {bench_path}", flush=True)
     return record
 
 
@@ -701,7 +701,7 @@ def generate_report(slug: str, evidence_dir: Path) -> Path:
     # Verification flags
     flag_pre_fail = "x" if not pre_result.passed else " "
     flag_post_pass = "x" if post_result.passed else " "
-    flag_no_regression = "x" if regression_count in ("N/A", 0) else " "
+    flag_no_regression = "x" if regression_count == 0 else " "  # N/A (no data) is never a pass
     flag_has_assertion = "x" if has_assertion else " "
 
     report_text = _REPORT_TEMPLATE.format(
@@ -789,6 +789,11 @@ def _cmd_classify(args: argparse.Namespace) -> int:
         print("\nFixed pre-existing failures:")
         for tid in c["fixed"]:
             print(f"  FIXED: {tid}")
+    print(f"\nVerdict: run_scope={c.get('run_scope')} valid={c.get('valid')}")
+    if not c.get("valid", False):
+        return 3  # inconclusive run: never a pass
+    if c["regressions"]:
+        return 2  # regressions found
     return 0
 
 
