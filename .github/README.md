@@ -7,6 +7,8 @@
 [![IBM Bob kit](https://img.shields.io/badge/IBM%20Bob-kit-0f62fe)](../.bob/)
 [![Hackathon theme](https://img.shields.io/badge/hackathon-Theme%201-6929c4)](#tldr)
 
+**Live tools:** [Replay Bob's recorded session](https://kniggukniggu-droid.github.io/onramp-evidence/session.html) · [Reviewer verdict for your PR](https://kniggukniggu-droid.github.io/onramp-evidence/verdict.html) · [Verify the seal](https://kniggukniggu-droid.github.io/onramp-evidence/seal.html) · [Set up OnRamp for your repo](https://kniggukniggu-droid.github.io/onramp-evidence/profile.html)
+
 A drop-in kit that takes a developer from "never seen this repo" to a verified bug fix with sealed evidence, using only Bob-native extension points.
 
 > **Derived from [healthchecks/healthchecks](https://github.com/healthchecks/healthchecks) at commit `0968fa2` (BSD-3-Clause, see [LICENSE](../LICENSE)).  This repository is not affiliated with the Healthchecks project.**
